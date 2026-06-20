@@ -338,6 +338,7 @@
         client.onConnectionLost = alPerderConexion;
 
         function alConectar() {
+
     console.log('MQTT conectado exitosamente.');
 
     statusBar.innerText = "🟢 CONECTADO ONLINE";
@@ -345,6 +346,9 @@
     client.subscribe('riego_pro/estado');
 
     console.log("Suscripto a riego_pro/estado");
+
+    // Solicitar estado al ESP32
+    enviar('riego_pro/comando', 'GET_STATUS');
 }
 
         function alFallarConexion(error) {
