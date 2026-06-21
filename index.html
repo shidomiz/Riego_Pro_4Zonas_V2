@@ -427,13 +427,59 @@ console.log("Suscripto a TODOS los topics");
         }
 
 
-         function alRecibirMensaje(message) {
+function alRecibirMensaje(message) {
 
     console.log("TOPICO:", message.destinationName);
     console.log("PAYLOAD:", message.payloadString);
 
-    if(message.destinationName == "riego_pro/estado"){
-        console.log("JSON DEL ESP32 RECIBIDO");
+    if(message.destinationName === "riego_pro/estado") {
+
+        let data = JSON.parse(message.payloadString);
+
+        document.getElementById("hora").innerText = data.hora;
+
+        document.getElementById("auto").innerText =
+            data.auto ? "🟢 HABILITADO" : "🔴 DESHABILITADO";
+
+        document.getElementById("motor").innerText =
+            data.motor ? "🟢 ENCENDIDA" : "🔴 PARADO";
+
+        document.getElementById("lluvia").innerText =
+            data.lluvia ? "🌧️ LLUVIA" : "☀️ SECO";
+
+        document.getElementById("z1").innerText =
+            data.z1 ? "🟢 ENCENDIDA" : "🔴 APAGADA";
+
+        document.getElementById("z2").innerText =
+            data.z2 ? "🟢 ENCENDIDA" : "🔴 APAGADA";
+
+        document.getElementById("z3").innerText =
+            data.z3 ? "🟢 ENCENDIDA" : "🔴 APAGADA";
+
+        document.getElementById("z4").innerText =
+            data.z4 ? "🟢 ENCENDIDA" : "🔴 APAGADA";
+
+        document.getElementById("prog1").innerText = data.prog1;
+        document.getElementById("prog2").innerText = data.prog2;
+        document.getElementById("prog3").innerText = data.prog3;
+        document.getElementById("prog4").innerText = data.prog4;
+
+        document.getElementById("nombre1").innerText = data.name_z1 + ":";
+        document.getElementById("nombre2").innerText = data.name_z2 + ":";
+        document.getElementById("nombre3").innerText = data.name_z3 + ":";
+        document.getElementById("nombre4").innerText = data.name_z4 + ":";
+
+        document.getElementById("nombre1p").innerText = data.name_z1;
+        document.getElementById("nombre2p").innerText = data.name_z2;
+        document.getElementById("nombre3p").innerText = data.name_z3;
+        document.getElementById("nombre4p").innerText = data.name_z4;
+
+        document.getElementById("input_nz1").value = data.name_z1;
+        document.getElementById("input_nz2").value = data.name_z2;
+        document.getElementById("input_nz3").value = data.name_z3;
+        document.getElementById("input_nz4").value = data.name_z4;
+
+        console.log("DATOS ACTUALIZADOS EN PANTALLA");
     }
 }
 
