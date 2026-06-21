@@ -425,6 +425,9 @@
 
 
          function alRecibirMensaje(message) {
+
+             alert(message.payloadString);
+             
     console.log("TOPICO:", message.destinationName);
     console.log("PAYLOAD:", message.payloadString);
 
