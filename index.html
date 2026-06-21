@@ -343,6 +343,9 @@
 
     statusBar.innerText = "🟢 CONECTADO ONLINE";
 
+            client.subscribe("#");
+console.log("Suscripto a TODOS los topics");
+
     client.subscribe('riego_pro/estado');
 
     console.log("Suscripto a riego_pro/estado");
