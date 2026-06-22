@@ -212,6 +212,32 @@
         </div>
 
         <div class="card">
+    <h2>🌦 Clima</h2>
+
+    <div class="data-row">
+        <span class="data-label">🌡 Temperatura:</span>
+        <span class="data-value" id="temp">-- °C</span>
+    </div>
+
+    <div class="data-row">
+        <span class="data-label">🌧 Prob. lluvia:</span>
+        <span class="data-value" id="rainChance">-- %</span>
+    </div>
+
+    <div class="data-row">
+        <span class="data-label">📍 Estado:</span>
+        <span class="data-value" id="rainStatus">
+            Consultando...
+        </span>
+    </div>
+
+    <div class="data-row">
+        <span class="data-label">🕒 Actualizado:</span>
+        <span class="data-value" id="climaHora">--:--</span>
+    </div>
+</div>
+
+        <div class="card">
             <h2>🎮 Comando Remoto Manual</h2>
             <div class="btn-grid">
                 <button onclick="enviar('riego_pro/comando', 'Z1_TOGGLE')">Alternar Z1</button>
