@@ -458,20 +458,20 @@ function alRecibirMensaje(message) {
     console.log("TOPICO:", message.destinationName);
     console.log("PAYLOAD:", message.payloadString);
 
-    document.getElementById("temp").innerHTML =
-    datos.temp.toFixed(1) + " °C";
-
-document.getElementById("rainChance").innerHTML =
-    datos.rainChance + " %";
-
-document.getElementById("rainBlock").innerHTML =
-    datos.rainBlock
-        ? "🌧️ Riego suspendido"
-        : "✅ Riego habilitado";
-
     if(message.destinationName === "riego_pro/estado") {
 
         let data = JSON.parse(message.payloadString);
+
+            document.getElementById("temp").innerHTML =
+            datos.temp.toFixed(1) + " °C";
+
+            document.getElementById("rainChance").innerHTML =
+            datos.rainChance + " %";
+
+            document.getElementById("rainBlock").innerHTML =
+            datos.rainBlock
+                    ? "🌧️ Riego suspendido"
+                    : "✅ Riego habilitado";
 
         document.getElementById("hora").innerText = data.hora;
 
