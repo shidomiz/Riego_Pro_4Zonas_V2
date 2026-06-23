@@ -458,25 +458,23 @@ function alRecibirMensaje(message) {
     console.log("TOPICO:", message.destinationName);
     console.log("PAYLOAD:", message.payloadString);
 
-    if(message.destinationName == "riego_pro/estado") {
+    if(message.destinationName === "riego_pro/estado") {
 
-        const datos = JSON.parse(message.payloadString);
+        let data = JSON.parse(message.payloadString);
+
+        console.log(data);
 
         document.getElementById("temp").innerHTML =
-            datos.temp.toFixed(1) + " °C";
+            data.temp.toFixed(1) + " °C";
 
         document.getElementById("rainChance").innerHTML =
-            datos.rainChance + " %";
+            data.rainChance + " %";
 
         document.getElementById("rainBlock").innerHTML =
-            datos.rainBlock
+            data.rainBlock
                 ? "🌧️ Riego suspendido"
                 : "✅ Riego habilitado";
-
-        console.log("DATOS ACTUALIZADOS EN PANTALLA");
-    }
-}
-
+        
         document.getElementById("hora").innerText = data.hora;
 
         document.getElementById("auto").innerText =
