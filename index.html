@@ -461,17 +461,6 @@ function alRecibirMensaje(message) {
 
         let data = JSON.parse(message.payloadString);
 
-        document.getElementById("temp").innerHTML =
-        data.temp.toFixed(1) + " °C";
-
-        document.getElementById("rainChance").innerHTML =
-        data.rainChance + " %";
-
-        document.getElementById("rainBlock").innerHTML =
-        data.rainBlock
-            ? "🌧️ Riego suspendido"
-            : "✅ Riego habilitado";
-
         document.getElementById("hora").innerText = data.hora;
         
         document.getElementById("auto").innerText =
@@ -514,6 +503,15 @@ function alRecibirMensaje(message) {
         document.getElementById("input_nz2").value = data.name_z2;
         document.getElementById("input_nz3").value = data.name_z3;
         document.getElementById("input_nz4").value = data.name_z4;
+
+        document.getElementById("temp").innerHTML =
+        data.temp.toFixed(1) + " °C";
+        document.getElementById("rainChance").innerHTML =
+        data.rainChance + " %";
+        document.getElementById("rainBlock").innerHTML =
+        data.rainBlock
+            ? "🌧️ Riego suspendido"
+            : "✅ Riego habilitado";
 
         console.log("DATOS ACTUALIZADOS EN PANTALLA");
 
