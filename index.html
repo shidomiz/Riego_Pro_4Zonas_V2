@@ -468,17 +468,25 @@ function alRecibirMensaje(message) {
 
         document.getElementById("lluvia").innerText =
             data.lluvia ? "🌧️ LLUVIA" : "☀️ SECO";
+let tempObj = document.getElementById("temp");
+if(tempObj){
+    tempObj.innerHTML =
+        (data.temp ?? 0).toFixed(1) + " °C";
+}
 
-        document.getElementById("temp").innerHTML =
-            (data.temp ?? 0).toFixed(1) + " °C";
+let rainObj = document.getElementById("rainChance");
+if(rainObj){
+    rainObj.innerHTML =
+        (data.rainChance ?? 0) + " %";
+}
 
-        document.getElementById("rainChance").innerHTML =
-            (data.rainChance ?? 0) + " %";
-
-        document.getElementById("rainStatus").innerHTML =
-            data.rainBlock
-                ? "🌧️ Riego suspendido"
-                : "✅ Riego habilitado";
+let statusObj = document.getElementById("rainStatus");
+if(statusObj){
+    statusObj.innerHTML =
+        data.rainBlock
+            ? "🌧️ Riego suspendido"
+            : "✅ Riego habilitado";
+}
         
         document.getElementById("z1").innerText =
             data.z1 ? "🟢 ENCENDIDA" : "🔴 APAGADA";
