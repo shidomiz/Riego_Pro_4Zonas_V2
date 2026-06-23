@@ -473,6 +473,17 @@ function alRecibirMensaje(message) {
         document.getElementById("lluvia").innerText =
             data.lluvia ? "🌧️ LLUVIA" : "☀️ SECO";
 
+        document.getElementById("temp").innerHTML =
+            (data.temp ?? 0).toFixed(1) + " °C";
+
+        document.getElementById("rainChance").innerHTML =
+            (data.rainChance ?? 0) + " %";
+
+        document.getElementById("rainBlock").innerHTML =
+            data.rainBlock
+                ? "🌧️ Riego suspendido"
+                : "✅ Riego habilitado";
+        
         document.getElementById("z1").innerText =
             data.z1 ? "🟢 ENCENDIDA" : "🔴 APAGADA";
 
@@ -504,17 +515,6 @@ function alRecibirMensaje(message) {
         document.getElementById("input_nz2").value = data.name_z2;
         document.getElementById("input_nz3").value = data.name_z3;
         document.getElementById("input_nz4").value = data.name_z4;
-
-                document.getElementById("temp").innerHTML =
-            (data.temp ?? 0).toFixed(1) + " °C";
-
-        document.getElementById("rainChance").innerHTML =
-            (data.rainChance ?? 0) + " %";
-
-        document.getElementById("rainBlock").innerHTML =
-            data.rainBlock
-                ? "🌧️ Riego suspendido"
-                : "✅ Riego habilitado";
 
         console.log("DATOS ACTUALIZADOS EN PANTALLA");
     }
