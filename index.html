@@ -183,7 +183,7 @@
     </div>
     <div class="data-row">
         <span class="data-label">📍 Estado:</span>
-        <span class="data-value" id="rainBlock">
+        <span class="data-value" id="rainStatus">
             Consultando...
         </span>
     </div>
@@ -475,7 +475,7 @@ function alRecibirMensaje(message) {
         document.getElementById("rainChance").innerHTML =
             (data.rainChance ?? 0) + " %";
 
-        document.getElementById("rainBlock").innerHTML =
+        document.getElementById("rainStatus").innerHTML =
             data.rainBlock
                 ? "🌧️ Riego suspendido"
                 : "✅ Riego habilitado";
