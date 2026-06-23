@@ -461,6 +461,17 @@ function alRecibirMensaje(message) {
 
         let data = JSON.parse(message.payloadString);
 
+        document.getElementById("temp").innerHTML =
+        data.temp.toFixed(1) + " °C";
+
+        document.getElementById("rainChance").innerHTML =
+        data.rainChance + " %";
+
+        document.getElementById("rainBlock").innerHTML =
+        data.rainBlock
+            ? "🌧️ Riego suspendido"
+            : "✅ Riego habilitado";
+
         document.getElementById("hora").innerText = data.hora;
         
         document.getElementById("auto").innerText =
