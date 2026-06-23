@@ -462,10 +462,8 @@ function alRecibirMensaje(message) {
 
         let data = JSON.parse(message.payloadString);
 
-        console.log(data);
-
         document.getElementById("hora").innerText = data.hora;
-
+        
         document.getElementById("auto").innerText =
             data.auto ? "🟢 HABILITADO" : "🔴 DESHABILITADO";
 
