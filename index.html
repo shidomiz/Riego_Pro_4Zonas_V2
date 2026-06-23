@@ -505,17 +505,6 @@ function alRecibirMensaje(message) {
         document.getElementById("input_nz3").value = data.name_z3;
         document.getElementById("input_nz4").value = data.name_z4;
 
-        document.getElementById("temp").innerText =
-    datos.temp + " °C";
-
-document.getElementById("rainChance").innerText =
-    datos.rainChance + " %";
-
-document.getElementById("rainStatus").innerText =
-    datos.rainBlock
-    ? "🚫 Riego suspendido"
-    : "✅ Riego habilitado";
-
         console.log("DATOS ACTUALIZADOS EN PANTALLA");
     }
 }
