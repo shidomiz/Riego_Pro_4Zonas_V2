@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es"> 
+<head>
+
+<script>
+if(sessionStorage.getItem("logueado") !== "si"){
+    window.location.href = "index.html";
+}
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Riego Inteligente 4 Zonas</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+    
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --text-muted: #aaaaaa;
+            --primary: #3498db;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f1c40f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+        }
+
+        header {
+            max-width: 1000px;
+            margin: 0 auto 20px auto;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--success);
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        #statusBar {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto 20px auto;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            background-color: var(--warning);
+            color: black;
+            transition: all 0.4s ease;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border: 1px solid #2a2a2a;
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            border-bottom: 2px solid #2a2a2a;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .data-label {
+            color: var(--text-muted);
+        }
+
+        .data-value {
+            font-weight: bold;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: var(--primary);
+            color: white;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button.btn-danger {
+            background-color: var(--danger);
+        }
+
+        button.btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        button.btn-success {
+            background-color: var(--success);
+        }
+
+        button.btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+        <div>
+            <h1>SISTEMA DE RIEGO INTELIGENTE</h1>
+            <p style="color: var(--text-muted)">Monitoreo MQTT y Telemetría en Tiempo Real</p>
+        </div>
+
+        <button onclick="logout()" class="btn-danger">
+            🚪 Salir
+        </button>
+    </div>
+</header>
+
+    <div id="statusBar">⏳ CONECTANDO AL BROKER MQTT...</div>
+
+    <div class="container">
+
+        <div class="card">
+            <h2>⚙️ Estado General</h2>
+            <div class="data-row">
+                <span class="data-label">Hora del RTC:</span>
+                <span class="data-value" id="hora">--/-- --:--:--</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Modo Automático:</span>
+                <span class="data-value" id="auto">🔴 DESHABILITADO</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Sensor de Lluvia:</span>
+                <span class="data-value" id="lluvia">☀️ SECO</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Bomba Hidráulica:</span>
+                <span class="data-value" id="motor">🔴 PARADO</span>
+            </div>
+        </div>
+        
+        <div class="card">
+    <h2>🌦 Clima</h2>
+    <div class="data-row">
+        <span class="data-label">🌡 Temperatura:</span>
+        <span class="data-value" id="temp">-- °C</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">🌧 Prob. lluvia:</span>
+        <span class="data-value" id="rainChance">-- %</span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">📍 Estado:</span>
+        <span class="data-value" id="rainStatus">
+            Consultando...
+        </span>
+    </div>
+    <div class="data-row">
+        <span class="data-label">🕒 Actualizado:</span>
+        <span class="data-value" id="climaHora">--:--</span>
+    </div>
+</div>
+     
+        <div class="card">
+            <h2>🌱 Válvulas de Riego</h2>
+            <div class="data-row">
+                <span class="data-label" id="nombre1p">Zona 1</span>
+                <span class="data-value" id="z1">🔴 APAGADA</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label" id="nombre2p">Zona 2</span>
+                <span class="data-value" id="z2">🔴 APAGADA</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label" id="nombre3p">Zona 3</span>
+                <span class="data-value" id="z3">🔴 APAGADA</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label" id="nombre4p">Zona 4</span>
+                <span class="data-value" id="z4">🔴 APAGADA</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📅 Tiempos Programados</h2>
+            <div class="data-row">
+                <span class="data-label" id="nombre1">Zona 1:</span>
+                <span class="data-value" id="prog1">Cargando...</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label" id="nombre2">Zona 2:</span>
+                <span class="data-value" id="prog2">Cargando...</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label" id="nombre3">Zona 3:</span>
+                <span class="data-value" id="prog3">Cargando...</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label" id="nombre4">Zona 4:</span>
+                <span class="data-value" id="prog4">Cargando...</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎮 Comando Remoto Manual</h2>
+            <div class="btn-grid">
+                <button onclick="enviar('riego_pro/comando', 'Z1_TOGGLE')">Alternar Z1</button>
+                <button onclick="enviar('riego_pro/comando', 'Z2_TOGGLE')">Alternar Z2</button>
+                <button onclick="enviar('riego_pro/comando', 'Z3_TOGGLE')">Alternar Z3</button>
+                <button onclick="enviar('riego_pro/comando', 'Z4_TOGGLE')">Alternar Z4</button>
+                
+                <button class="btn-success" onclick="enviar('riego_pro/comando', 'AUTO_ON')">🤖 AUTO ON</button>
+                <button class="btn-danger" onclick="enviar('riego_pro/comando', 'AUTO_OFF')">🤖 AUTO OFF</button>
+                
+                <button class="btn-danger full-width" onclick="enviar('riego_pro/comando', 'STOP_ALL')">🛑 APAGAR TODO</button>
+            </div>
+        </div>
+
+        <div class="card" style="grid-column: 1 / -1;">
+            <h2>📅 Configurar Horarios y Días de Riego</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                
+                <div class="form-group">
+                    <label style="font-weight: bold; color: var(--success);">1. Seleccionar Zona:</label>
+                    <select id="prog_zona" style="width: 100%; padding: 8px; margin-top: 5px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+                        <option value="1">Zona 1</option>
+                        <option value="2">Zona 2</option>
+                        <option value="3">Zona 3</option>
+                        <option value="4">Zona 4</option>
+                    </select>
+                </div>
+
+                <div style="background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333;">
+                    <label style="font-weight: bold; color: var(--primary);">⏱️ TURNO 1:</label>
+                    <div style="display: flex; gap: 5px; margin-top: 5px;">
+                        <input type="number" id="p_h1" min="0" max="23" placeholder="Hora" style="width:33%; padding:5px; text-align:center;">
+                        <input type="number" id="p_m1" min="0" max="59" placeholder="Min" style="width:33%; padding:5px; text-align:center;">
+                        <input type="number" id="p_d1" min="0" max="120" placeholder="Min Riego" style="width:34%; padding:5px; text-align:center; background:#1e3d59; color:white;">
+                    </div>
+                </div>
+
+                <div style="background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333;">
+                    <label style="font-weight: bold; color: var(--primary);">⏱️ TURNO 2:</label>
+                    <div style="display: flex; gap: 5px; margin-top: 5px;">
+                        <input type="number" id="p_h2" min="0" max="23" placeholder="Hora" style="width:33%; padding:5px; text-align:center;">
+                        <input type="number" id="p_m2" min="0" max="59" placeholder="Min" style="width:33%; padding:5px; text-align:center;">
+                        <input type="number" id="p_d2" min="0" max="120" placeholder="Min Riego" style="width:34%; padding:5px; text-align:center; background:#1e3d59; color:white;">
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: #252525; padding: 12px; border-radius: 6px; border: 1px solid #333; margin-bottom: 15px;">
+                <label style="font-weight: bold; color: var(--warning); display: block; margin-bottom: 8px;">🗓️ Seleccionar Días de Riego:</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                    <label><input type="checkbox" class="chk-dia" value="1"> Lun</label>
+                    <label><input type="checkbox" class="chk-dia" value="2"> Mar</label>
+                    <label><input type="checkbox" class="chk-dia" value="3"> Mié</label>
+                    <label><input type="checkbox" class="chk-dia" value="4"> Jue</label>
+                    <label><input type="checkbox" class="chk-dia" value="5"> Vie</label>
+                    <label><input type="checkbox" class="chk-dia" value="6"> Sáb</label>
+                    <label><input type="checkbox" class="chk-dia" value="7"> Dom</label>
+                </div>
+            </div>
+
+            <button class="btn-success full-width" onclick="enviarProgramacionWeb()">💾 Guardar Cronograma en ESP32</button>
+        </div>
+        
+        <div class="card">
+            <h2>🏷️ Nombres de Zonas</h2>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Zona 1:</label>
+                <input type="text" id="input_nz1" placeholder="Ej: Jardín Delantero" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Zona 2:</label>
+                <input type="text" id="input_nz2" placeholder="Ej: Huerta" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Zona 3:</label>
+                <input type="text" id="input_nz3" placeholder="Ej: Patio Trasero" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Zona 4:</label>
+                <input type="text" id="input_nz4" placeholder="Ej: Canteros" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <button class="btn-success full-width" onclick="guardarNombresZonas()">💾 Guardar Nombres</button>
+        </div>
+
+        <div class="card">
+            <h2>🌐 Configuración de Red</h2>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Nombre de Red (SSID):</label>
+                <input type="text" id="input_ssid" placeholder="Tu red WiFi" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Contraseña WiFi:</label>
+                <input type="password" id="input_wfifipass" placeholder="••••••••" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <button class="btn-danger full-width" onclick="guardarRedWiFi()">📡 Guardar y Reiniciar ESP32</button>
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+        const broker = "636db169bfd3417bbe1d3c0409e44f3e.s1.eu.hivemq.cloud"; 
+        const puerto = 8884; 
+        const usuario = "Riego_Pro_V4";
+        const contrasena = "Nico159+++";
+     
+        const clientId = "web_client_" + Math.random().toString(16).substr(2, 8);
+        const statusBar = document.getElementById('statusBar');
+
+        const client = new Paho.MQTT.Client(broker, puerto, clientId);
+
+        const opcionesConexion = {
+            useSSL: true,
+            userName: usuario,
+            password: contrasena,
+            onSuccess: alConectar,
+            onFailure: alFallarConexion,
+            keepAliveInterval: 60,
+            cleanSession: true,
+            mqttVersion: 4
+        };
+
+        client.connect(opcionesConexion);
+        client.onMessageArrived = alRecibirMensaje;
+        client.onConnectionLost = alPerderConexion;
+
+        function alConectar() {
+
+    console.log('MQTT conectado exitosamente.');
+
+    statusBar.innerText = "🟢 CONECTADO ONLINE";
+
+            client.subscribe("#");
+console.log("Suscripto a TODOS los topics");
+
+    client.subscribe('riego_pro/estado');
+
+    console.log("Suscripto a riego_pro/estado");
+
+    // Solicitar estado al ESP32
+    enviar('riego_pro/comando', 'GET_STATUS');
+}
+
+        function alFallarConexion(error) {
+            console.error("Fallo de conexión MQTT:", error);
+            statusBar.innerText = "🔴 ERROR DE CONEXIÓN: " + error.errorMessage;
+            statusBar.style.background = "#e74c3c";
+            statusBar.style.color = "white";
+        }
+
+        function alPerderConexion(responseObject) {
+            if (responseObject.errorCode !== 0) {
+                console.log("Conexión perdida:" + responseObject.errorMessage);
+                statusBar.innerText = "🔴 DESCONECTADO (Reconectando...)";
+                statusBar.style.background = "#e74c3c";
+                statusBar.style.color = "white";
+            }
+        }
+
+        function enviar(topic, mensaje) {
+            if (!client.isConnected()) {
+                alert("No estás conectado al broker MQTT.");
+                return;
+            }
+            const message = new Paho.MQTT.Message(mensaje);
+            message.destinationName = topic;
+            message.qos = 1;
+            client.send(message);
+            console.log(`Comando enviado a [${topic}]: ${mensaje}`);
+            
+            const originalText = statusBar.innerText;
+            const originalBg = statusBar.style.background;
+            const originalColor = statusBar.style.color;
+            
+            statusBar.innerText = `⚡ ENVIADO: ${mensaje} A ${topic.toUpperCase()}`;
+            statusBar.style.background = "#3498db";
+            statusBar.style.color = "white";
+            
+            setTimeout(() => {
+                statusBar.innerText = originalText;
+                statusBar.style.background = originalBg;
+                statusBar.style.color = originalColor;
+            }, 2000);
+        }
+
+        function guardarNombresZonas() {
+            const nz1 = document.getElementById('input_nz1').value.trim();
+            const nz2 = document.getElementById('input_nz2').value.trim();
+            const nz3 = document.getElementById('input_nz3').value.trim();
+            const nz4 = document.getElementById('input_nz4').value.trim();
+
+            if(!nz1 || !nz2 || !nz3 || !nz4) {
+                alert("Por favor, completa los nombres de todas las zonas.");
+                return;
+            }
+
+            const comando = `SET_NAMES,${nz1},${nz2},${nz3},${nz4}`;
+            enviar('riego_pro/comando', comando);
+        }
+
+        function guardarRedWiFi() {
+            const ssid = document.getElementById('input_ssid').value.trim();
+            const pass = document.getElementById('input_wfifipass').value.trim();
+
+            if(!ssid || !pass) {
+                alert("Por favor, ingresa el SSID y la contraseña de la red.");
+                return;
+            }
+
+            if(confirm("¿Estás seguro? El ESP32 se desconectará e intentará unirse a la nueva red.")) {
+                const comando = `SET_WIFI,${ssid},${pass}`;
+                enviar('riego_pro/comando', comando);
+            }
+        }
+
+
+function alRecibirMensaje(message) {
+
+    console.log("TOPICO:", message.destinationName);
+    console.log("PAYLOAD:", message.payloadString);
+
+    if(message.destinationName === "riego_pro/estado") {
+
+        let data = JSON.parse(message.payloadString);  
+
+        document.getElementById("hora").innerText = data.hora;
+
+        document.getElementById("auto").innerText =
+            data.auto ? "🟢 HABILITADO" : "🔴 DESHABILITADO";
+
+        document.getElementById("motor").innerText =
+            data.motor ? "🟢 ENCENDIDA" : "🔴 PARADO";
+
+        document.getElementById("lluvia").innerText =
+            data.lluvia ? "🌧️ LLUVIA" : "☀️ SECO";
+let tempObj = document.getElementById("temp");
+if(tempObj){
+    tempObj.innerHTML =
+        (data.temp ?? 0).toFixed(1) + " °C";
+}
+
+let rainObj = document.getElementById("rainChance");
+if(rainObj){
+    rainObj.innerHTML =
+        (data.rainChance ?? 0) + " %";
+}
+
+let statusObj = document.getElementById("rainStatus");
+if(statusObj){
+    statusObj.innerHTML =
+        data.rainBlock
+            ? "🌧️ Riego suspendido"
+            : "✅ Riego habilitado";
+}
+        
+        document.getElementById("z1").innerText =
+            data.z1 ? "🟢 ENCENDIDA" : "🔴 APAGADA";
+
+        document.getElementById("z2").innerText =
+            data.z2 ? "🟢 ENCENDIDA" : "🔴 APAGADA";
+
+        document.getElementById("z3").innerText =
+            data.z3 ? "🟢 ENCENDIDA" : "🔴 APAGADA";
+
+        document.getElementById("z4").innerText =
+            data.z4 ? "🟢 ENCENDIDA" : "🔴 APAGADA";
+
+        document.getElementById("prog1").innerText = data.prog1;
+        document.getElementById("prog2").innerText = data.prog2;
+        document.getElementById("prog3").innerText = data.prog3;
+        document.getElementById("prog4").innerText = data.prog4;
+
+        document.getElementById("nombre1").innerText = data.name_z1 + ":";
+        document.getElementById("nombre2").innerText = data.name_z2 + ":";
+        document.getElementById("nombre3").innerText = data.name_z3 + ":";
+        document.getElementById("nombre4").innerText = data.name_z4 + ":";
+
+        document.getElementById("nombre1p").innerText = data.name_z1;
+        document.getElementById("nombre2p").innerText = data.name_z2;
+        document.getElementById("nombre3p").innerText = data.name_z3;
+        document.getElementById("nombre4p").innerText = data.name_z4;
+
+        document.getElementById("input_nz1").value = data.name_z1;
+        document.getElementById("input_nz2").value = data.name_z2;
+        document.getElementById("input_nz3").value = data.name_z3;
+        document.getElementById("input_nz4").value = data.name_z4;
+
+        console.log("DATOS ACTUALIZADOS EN PANTALLA");
+    }
+}
+
+        function enviarProgramacionWeb() {
+            const zona = document.getElementById('prog_zona').value;
+            const h1 = document.getElementById('p_h1').value || "0";
+            const m1 = document.getElementById('p_m1').value || "0";
+            const d1 = document.getElementById('p_d1').value || "0";
+            const h2 = document.getElementById('p_h2').value || "0";
+            const m2 = document.getElementById('p_m2').value || "0";
+            const d2 = document.getElementById('p_d2').value || "0";
+
+            let diasMascara = 0;
+            const checkboxes = document.querySelectorAll('.chk-dia');
+            checkboxes.forEach(chk => {
+                if (chk.checked) {
+                    diasMascara |= (1 << parseInt(chk.value));
+                }
+            });
+
+            if (diasMascara === 0) {
+                alert("Por favor, selecciona al menos un día de la semana para el riego.");
+                return;
+            }
+
+            const comando = `SET_PROG,${zona},${h1},${m1},${d1},${h2},${m2},${d2},${diasMascara}`;
+            enviar('riego_pro/comando', comando);
+        }
+    </script>
+
+<script>
+function logout(){
+    sessionStorage.removeItem("logueado");
+    window.location.href="index.html";
+}
+</script>
+</body>
+</html> 
