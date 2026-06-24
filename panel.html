@@ -263,6 +263,21 @@ if(sessionStorage.getItem("logueado") !== "si"){
             </div>
         </div>
 
+        <div class="card">
+                <h2>📋 Historial de Eventos</h2>
+
+                    <div id="historial"
+                         style="max-height:250px;
+                        overflow-y:auto;
+                        font-size:14px;">
+    </div>
+
+                <button class="btn-danger full-width"
+                    onclick="borrarHistorial()">
+                    🗑️ Borrar Historial
+                    </button>
+</div>
+
         <div class="card" style="grid-column: 1 / -1;">
             <h2>📅 Configurar Horarios y Días de Riego</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px;">
@@ -463,6 +478,80 @@ console.log("Suscripto a TODOS los topics");
             }
         }
 
+                let historialEventos =
+        JSON.parse(localStorage.getItem("historial")) || [];
+        
+        let estadoAnterior = {
+        iniciado:false,
+        z1:false,
+        z2:false,
+        z3:false,
+        z4:false,
+        motor:false,
+        auto:false
+        };
+        
+        function agregarEvento(texto){
+        
+        ```
+        const ahora = new Date();
+        
+        const fecha =
+            ahora.toLocaleDateString("es-AR") +
+            " " +
+            ahora.toLocaleTimeString("es-AR");
+        
+        historialEventos.unshift(
+            fecha + " - " + texto
+        );
+        
+        if(historialEventos.length > 100){
+            historialEventos.pop();
+        }
+        
+        localStorage.setItem(
+            "historial",
+            JSON.stringify(historialEventos)
+        );
+        
+        mostrarHistorial();
+        ```
+        
+        }
+        
+        function mostrarHistorial(){
+        
+        ```
+        const div =
+            document.getElementById("historial");
+        
+        if(!div) return;
+        
+        div.innerHTML =
+            historialEventos.map(e =>
+                `<div style="margin-bottom:6px">${e}</div>`
+            ).join("");
+        ```
+        
+        }
+        
+        function borrarHistorial(){
+        
+        ```
+        if(confirm("¿Borrar historial completo?")){
+        
+            historialEventos = [];
+        
+            localStorage.removeItem("historial");
+        
+            mostrarHistorial();
+        }
+        ```
+        
+        }
+        
+        mostrarHistorial();
+        
 
 function alRecibirMensaje(message) {
 
@@ -472,6 +561,64 @@ function alRecibirMensaje(message) {
     if(message.destinationName === "riego_pro/estado") {
 
         let data = JSON.parse(message.payloadString);  
+
+        if(estadoAnterior.iniciado){
+                
+                ```
+                if(data.z1 !== estadoAnterior.z1){
+                    agregarEvento(
+                        "Zona 1 " +
+                        (data.z1 ? "ENCENDIDA" : "APAGADA")
+                    );
+                }
+                
+                if(data.z2 !== estadoAnterior.z2){
+                    agregarEvento(
+                        "Zona 2 " +
+                        (data.z2 ? "ENCENDIDA" : "APAGADA")
+                    );
+                }
+                
+                if(data.z3 !== estadoAnterior.z3){
+                    agregarEvento(
+                        "Zona 3 " +
+                        (data.z3 ? "ENCENDIDA" : "APAGADA")
+                    );
+                }
+                
+                if(data.z4 !== estadoAnterior.z4){
+                    agregarEvento(
+                        "Zona 4 " +
+                        (data.z4 ? "ENCENDIDA" : "APAGADA")
+                    );
+                }
+                
+                if(data.motor !== estadoAnterior.motor){
+                    agregarEvento(
+                        "Bomba " +
+                        (data.motor ? "ENCENDIDA" : "APAGADA")
+                    );
+                }
+                
+                if(data.auto !== estadoAnterior.auto){
+                    agregarEvento(
+                        "Modo Automático " +
+                        (data.auto ? "ACTIVADO" : "DESACTIVADO")
+                    );
+                }
+                ```
+                
+                }
+                
+                estadoAnterior = {
+                iniciado:true,
+                z1:data.z1,
+                z2:data.z2,
+                z3:data.z3,
+                z4:data.z4,
+                motor:data.motor,
+                auto:data.auto
+                };
 
         document.getElementById("hora").innerText = data.hora;
 
