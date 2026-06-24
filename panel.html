@@ -277,6 +277,7 @@ if(sessionStorage.getItem("logueado") !== "si"){
                     🗑️ Borrar Historial
                     </button>
             </div>
+         </div>
 
         <div class="card" style="grid-column: 1 / -1;">
             <h2>📅 Configurar Horarios y Días de Riego</h2>
@@ -325,7 +326,7 @@ if(sessionStorage.getItem("logueado") !== "si"){
             </div>
 
             <button class="btn-success full-width" onclick="enviarProgramacionWeb()">💾 Guardar Cronograma en ESP32</button>
-        </div
+        </div>
 
             <div class="card">
         <h2>⚙️ Caudal por Zona</h2>
@@ -355,6 +356,8 @@ if(sessionStorage.getItem("logueado") !== "si"){
             💾 Guardar Caudales
         </button>
     </div>
+ </div>
+    
 
         <div class="card">
                 <h2>💧 Consumo Estimado</h2>
@@ -386,7 +389,8 @@ if(sessionStorage.getItem("logueado") !== "si"){
                     <strong id="consumoTotal">0.0 L</strong>
                 </div>
             </div>
-        
+
+    
         <div class="card">
             <h2>🏷️ Nombres de Zonas</h2>
             <div class="form-group" style="margin-bottom: 10px;">
@@ -407,7 +411,9 @@ if(sessionStorage.getItem("logueado") !== "si"){
             </div>
             <button class="btn-success full-width" onclick="guardarNombresZonas()">💾 Guardar Nombres</button>
         </div>
-     
+      </div>
+
+    
         <div class="card">
             <h2>🌐 Configuración de Red</h2>
             <div class="form-group" style="margin-bottom: 10px;">
