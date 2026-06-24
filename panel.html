@@ -268,7 +268,7 @@ if(sessionStorage.getItem("logueado") !== "si"){
             </div>
         </div>
             
-                 <div class="card">
+         <div class="card">
                 <h2>📋 Historial de Eventos</h2>
 
                 <div id="historial"
@@ -284,7 +284,100 @@ if(sessionStorage.getItem("logueado") !== "si"){
                     🗑️ Borrar Historial
                     </button>
             </div>
-         </div>
+
+        
+     <div class="card">
+            <h2>🏷️ Nombres de Zonas</h2>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Zona 1:</label>
+                <input type="text" id="input_nz1" placeholder="Ej: Jardín Delantero" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Zona 2:</label>
+                <input type="text" id="input_nz2" placeholder="Ej: Huerta" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Zona 3:</label>
+                <input type="text" id="input_nz3" placeholder="Ej: Patio Trasero" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Zona 4:</label>
+                <input type="text" id="input_nz4" placeholder="Ej: Canteros" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <button class="btn-success full-width" onclick="guardarNombresZonas()">💾 Guardar Nombres</button>
+        </div>
+
+            <div class="card">
+                <h2>💧 Consumo Estimado</h2>
+            
+                <div class="data-row">
+                    <span>Zona 1</span>
+                    <span id="consumo1">0.0 L</span>
+                </div>
+            
+                <div class="data-row">
+                    <span>Zona 2</span>
+                    <span id="consumo2">0.0 L</span>
+                </div>
+            
+                <div class="data-row">
+                    <span>Zona 3</span>
+                    <span id="consumo3">0.0 L</span>
+                </div>
+            
+                <div class="data-row">
+                    <span>Zona 4</span>
+                    <span id="consumo4">0.0 L</span>
+                </div>
+            
+                <hr style="margin:10px 0">
+            
+                <div class="data-row">
+                    <strong>TOTAL</strong>
+                    <strong id="consumoTotal">0.0 L</strong>
+                </div>
+     
+    <div class="card">
+        <h2>⚙️ Caudal por Zona</h2>
+    
+        <div class="data-row">
+            <span>Zona 1</span>
+            <input id="caudal1" type="number" value="8" style="width:80px">
+        </div>
+    
+        <div class="data-row">
+            <span>Zona 2</span>
+            <input id="caudal2" type="number" value="8" style="width:80px">
+        </div>
+    
+        <div class="data-row">
+            <span>Zona 3</span>
+            <input id="caudal3" type="number" value="8" style="width:80px">
+        </div>
+    
+        <div class="data-row">
+            <span>Zona 4</span>
+            <input id="caudal4" type="number" value="8" style="width:80px">
+        </div>
+    
+        <button class="btn-success full-width"
+                onclick="guardarCaudales()">
+            💾 Guardar Caudales
+        </button>
+    </div>
+        
+        <div class="card">
+            <h2>🌐 Configuración de Red</h2>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Nombre de Red (SSID):</label>
+                <input type="text" id="input_ssid" placeholder="Tu red WiFi" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Contraseña WiFi:</label>
+                <input type="password" id="input_wfifipass" placeholder="••••••••" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <button class="btn-danger full-width" onclick="guardarRedWiFi()">📡 Guardar y Reiniciar ESP32</button>
+        </div>
 
        <div class="card" style="grid-column: 1 / -1;">
             <h2>📅 Configurar Horarios y Días de Riego</h2>
@@ -334,102 +427,6 @@ if(sessionStorage.getItem("logueado") !== "si"){
 
             <button class="btn-success full-width" onclick="enviarProgramacionWeb()">💾 Guardar Cronograma en ESP32</button>
         </div>
-
-    <div class="card">
-                <h2>💧 Consumo Estimado</h2>
-            
-                <div class="data-row">
-                    <span>Zona 1</span>
-                    <span id="consumo1">0.0 L</span>
-                </div>
-            
-                <div class="data-row">
-                    <span>Zona 2</span>
-                    <span id="consumo2">0.0 L</span>
-                </div>
-            
-                <div class="data-row">
-                    <span>Zona 3</span>
-                    <span id="consumo3">0.0 L</span>
-                </div>
-            
-                <div class="data-row">
-                    <span>Zona 4</span>
-                    <span id="consumo4">0.0 L</span>
-                </div>
-            
-                <hr style="margin:10px 0">
-            
-                <div class="data-row">
-                    <strong>TOTAL</strong>
-                    <strong id="consumoTotal">0.0 L</strong>
-                </div>
-            
-
-     <div class="card">
-            <h2>🏷️ Nombres de Zonas</h2>
-            <div class="form-group" style="margin-bottom: 10px;">
-                <label>Zona 1:</label>
-                <input type="text" id="input_nz1" placeholder="Ej: Jardín Delantero" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
-            </div>
-            <div class="form-group" style="margin-bottom: 10px;">
-                <label>Zona 2:</label>
-                <input type="text" id="input_nz2" placeholder="Ej: Huerta" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
-            </div>
-            <div class="form-group" style="margin-bottom: 10px;">
-                <label>Zona 3:</label>
-                <input type="text" id="input_nz3" placeholder="Ej: Patio Trasero" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
-            </div>
-            <div class="form-group" style="margin-bottom: 15px;">
-                <label>Zona 4:</label>
-                <input type="text" id="input_nz4" placeholder="Ej: Canteros" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
-            </div>
-            <button class="btn-success full-width" onclick="guardarNombresZonas()">💾 Guardar Nombres</button>
-        </div>
-     
-    <div class="card">
-        <h2>⚙️ Caudal por Zona</h2>
-    
-        <div class="data-row">
-            <span>Zona 1</span>
-            <input id="caudal1" type="number" value="8" style="width:80px">
-        </div>
-    
-        <div class="data-row">
-            <span>Zona 2</span>
-            <input id="caudal2" type="number" value="8" style="width:80px">
-        </div>
-    
-        <div class="data-row">
-            <span>Zona 3</span>
-            <input id="caudal3" type="number" value="8" style="width:80px">
-        </div>
-    
-        <div class="data-row">
-            <span>Zona 4</span>
-            <input id="caudal4" type="number" value="8" style="width:80px">
-        </div>
-    
-        <button class="btn-success full-width"
-                onclick="guardarCaudales()">
-            💾 Guardar Caudales
-        </button>
-    </div>
-        
-        <div class="card">
-            <h2>🌐 Configuración de Red</h2>
-            <div class="form-group" style="margin-bottom: 10px;">
-                <label>Nombre de Red (SSID):</label>
-                <input type="text" id="input_ssid" placeholder="Tu red WiFi" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
-            </div>
-            <div class="form-group" style="margin-bottom: 15px;">
-                <label>Contraseña WiFi:</label>
-                <input type="password" id="input_wfifipass" placeholder="••••••••" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
-            </div>
-            <button class="btn-danger full-width" onclick="guardarRedWiFi()">📡 Guardar y Reiniciar ESP32</button>
-        </div>
-
-    </div>
 
     <script type="text/javascript">
         const broker = "636db169bfd3417bbe1d3c0409e44f3e.s1.eu.hivemq.cloud"; 
