@@ -391,6 +391,35 @@ if(sessionStorage.getItem("logueado") !== "si"){
                     🗑️ Borrar Historial
                     </button>
             </div>
+    
+            <div class="card">
+        <h2>⚙️ Caudal por Zona</h2>
+    
+        <div class="data-row">
+            <span>Zona 1</span>
+            <input id="caudal1" type="number" value="8" style="width:80px">
+        </div>
+    
+        <div class="data-row">
+            <span>Zona 2</span>
+            <input id="caudal2" type="number" value="8" style="width:80px">
+        </div>
+    
+        <div class="data-row">
+            <span>Zona 3</span>
+            <input id="caudal3" type="number" value="8" style="width:80px">
+        </div>
+    
+        <div class="data-row">
+            <span>Zona 4</span>
+            <input id="caudal4" type="number" value="8" style="width:80px">
+        </div>
+    
+        <button class="btn-success full-width"
+                onclick="guardarCaudales()">
+            💾 Guardar Caudales
+        </button>
+    </div>
 
     </div>
 
