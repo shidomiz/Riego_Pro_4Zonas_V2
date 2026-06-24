@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riego PRO - Acceso</title>
+
+<style>
+
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#121212;
+    color:white;
+    font-family:Segoe UI,sans-serif;
+}
+
+.login{
+    width:320px;
+    background:#1f1f1f;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 0 20px rgba(0,0,0,.4);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border:none;
+    border-radius:8px;
+    box-sizing:border-box;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:8px;
+    background:#2e7d32;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:.9;
+}
+
+.error{
+    color:#ff5252;
+    text-align:center;
+    margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="login">
+
+<h2>🌱 Riego PRO</h2>
+
+<input id="user" type="text" placeholder="Usuario">
+
+<input id="pass" type="password" placeholder="Contraseña">
+
+<button onclick="login()">
+Ingresar
+</button>
+
+<div id="error" class="error"></div>
+
+</div>
+
+<script>
+
+const USER="admin";
+const PASS="1234";
+
+function login(){
+
+    const u=document.getElementById("user").value.trim();
+    const p=document.getElementById("pass").value.trim();
+
+    if(u===USER && p===PASS){
+
+        sessionStorage.setItem("logueado","si");
+        window.location.href="panel.html";
+
+    }else{
+
+        document.getElementById("error").innerHTML =
+        "Usuario o contraseña incorrectos";
+
+    }
+}
+
+document.getElementById("pass").addEventListener("keypress",function(e){
+
+    if(e.key==="Enter"){
+        login();
+    }
+
+});
+
+</script>
+
+</body>
+</html>
