@@ -279,7 +279,56 @@ if(sessionStorage.getItem("logueado") !== "si"){
             </div>
          </div>
 
-         <div class="card">
+       <div class="card" style="grid-column: 1 / -1;">
+            <h2>📅 Configurar Horarios y Días de Riego</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                
+                <div class="form-group">
+                    <label style="font-weight: bold; color: var(--success);">1. Seleccionar Zona:</label>
+                    <select id="prog_zona" style="width: 100%; padding: 8px; margin-top: 5px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+                        <option value="1">Zona 1</option>
+                        <option value="2">Zona 2</option>
+                        <option value="3">Zona 3</option>
+                        <option value="4">Zona 4</option>
+                    </select>
+                </div>
+
+                <div style="background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333;">
+                    <label style="font-weight: bold; color: var(--primary);">⏱️ TURNO 1:</label>
+                    <div style="display: flex; gap: 5px; margin-top: 5px;">
+                        <input type="number" id="p_h1" min="0" max="23" placeholder="Hora" style="width:33%; padding:5px; text-align:center;">
+                        <input type="number" id="p_m1" min="0" max="59" placeholder="Min" style="width:33%; padding:5px; text-align:center;">
+                        <input type="number" id="p_d1" min="0" max="120" placeholder="Min Riego" style="width:34%; padding:5px; text-align:center; background:#1e3d59; color:white;">
+                    </div>
+                </div>
+
+                <div style="background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333;">
+                    <label style="font-weight: bold; color: var(--primary);">⏱️ TURNO 2:</label>
+                    <div style="display: flex; gap: 5px; margin-top: 5px;">
+                        <input type="number" id="p_h2" min="0" max="23" placeholder="Hora" style="width:33%; padding:5px; text-align:center;">
+                        <input type="number" id="p_m2" min="0" max="59" placeholder="Min" style="width:33%; padding:5px; text-align:center;">
+                        <input type="number" id="p_d2" min="0" max="120" placeholder="Min Riego" style="width:34%; padding:5px; text-align:center; background:#1e3d59; color:white;">
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: #252525; padding: 12px; border-radius: 6px; border: 1px solid #333; margin-bottom: 15px;">
+                <label style="font-weight: bold; color: var(--warning); display: block; margin-bottom: 8px;">🗓️ Seleccionar Días de Riego:</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                    <label><input type="checkbox" class="chk-dia" value="1"> Lun</label>
+                    <label><input type="checkbox" class="chk-dia" value="2"> Mar</label>
+                    <label><input type="checkbox" class="chk-dia" value="3"> Mié</label>
+                    <label><input type="checkbox" class="chk-dia" value="4"> Jue</label>
+                    <label><input type="checkbox" class="chk-dia" value="5"> Vie</label>
+                    <label><input type="checkbox" class="chk-dia" value="6"> Sáb</label>
+                    <label><input type="checkbox" class="chk-dia" value="7"> Dom</label>
+                </div>
+            </div>
+
+            <button class="btn-success full-width" onclick="enviarProgramacionWeb()">💾 Guardar Cronograma en ESP32</button>
+        </div>
+
+    <div class="card">
                 <h2>💧 Consumo Estimado</h2>
             
                 <div class="data-row">
@@ -362,60 +411,6 @@ if(sessionStorage.getItem("logueado") !== "si"){
         </button>
     </div>
  </div>
-
-
-
-   
-    
-        <div class="card" style="grid-column: 1 / -1;">
-            <h2>📅 Configurar Horarios y Días de Riego</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px;">
-                
-                <div class="form-group">
-                    <label style="font-weight: bold; color: var(--success);">1. Seleccionar Zona:</label>
-                    <select id="prog_zona" style="width: 100%; padding: 8px; margin-top: 5px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
-                        <option value="1">Zona 1</option>
-                        <option value="2">Zona 2</option>
-                        <option value="3">Zona 3</option>
-                        <option value="4">Zona 4</option>
-                    </select>
-                </div>
-
-                <div style="background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333;">
-                    <label style="font-weight: bold; color: var(--primary);">⏱️ TURNO 1:</label>
-                    <div style="display: flex; gap: 5px; margin-top: 5px;">
-                        <input type="number" id="p_h1" min="0" max="23" placeholder="Hora" style="width:33%; padding:5px; text-align:center;">
-                        <input type="number" id="p_m1" min="0" max="59" placeholder="Min" style="width:33%; padding:5px; text-align:center;">
-                        <input type="number" id="p_d1" min="0" max="120" placeholder="Min Riego" style="width:34%; padding:5px; text-align:center; background:#1e3d59; color:white;">
-                    </div>
-                </div>
-
-                <div style="background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333;">
-                    <label style="font-weight: bold; color: var(--primary);">⏱️ TURNO 2:</label>
-                    <div style="display: flex; gap: 5px; margin-top: 5px;">
-                        <input type="number" id="p_h2" min="0" max="23" placeholder="Hora" style="width:33%; padding:5px; text-align:center;">
-                        <input type="number" id="p_m2" min="0" max="59" placeholder="Min" style="width:33%; padding:5px; text-align:center;">
-                        <input type="number" id="p_d2" min="0" max="120" placeholder="Min Riego" style="width:34%; padding:5px; text-align:center; background:#1e3d59; color:white;">
-                    </div>
-                </div>
-            </div>
-
-            <div style="background: #252525; padding: 12px; border-radius: 6px; border: 1px solid #333; margin-bottom: 15px;">
-                <label style="font-weight: bold; color: var(--warning); display: block; margin-bottom: 8px;">🗓️ Seleccionar Días de Riego:</label>
-                <div style="display: flex; flex-wrap: wrap; gap: 12px;">
-                    <label><input type="checkbox" class="chk-dia" value="1"> Lun</label>
-                    <label><input type="checkbox" class="chk-dia" value="2"> Mar</label>
-                    <label><input type="checkbox" class="chk-dia" value="3"> Mié</label>
-                    <label><input type="checkbox" class="chk-dia" value="4"> Jue</label>
-                    <label><input type="checkbox" class="chk-dia" value="5"> Vie</label>
-                    <label><input type="checkbox" class="chk-dia" value="6"> Sáb</label>
-                    <label><input type="checkbox" class="chk-dia" value="7"> Dom</label>
-                </div>
-            </div>
-
-            <button class="btn-success full-width" onclick="enviarProgramacionWeb()">💾 Guardar Cronograma en ESP32</button>
-        </div>
-
         
         <div class="card">
             <h2>🌐 Configuración de Red</h2>
