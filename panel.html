@@ -262,21 +262,37 @@ if(sessionStorage.getItem("logueado") !== "si"){
                 <button class="btn-danger full-width" onclick="enviar('riego_pro/comando', 'STOP_ALL')">🛑 APAGAR TODO</button>
             </div>
         </div>
-
-        <div class="card">
-                <h2>📋 Historial de Eventos</h2>
-
-                    <div id="historial"
-                         style="max-height:250px;
-                        overflow-y:auto;
-                        font-size:14px;">
-    </div>
-
-                <button class="btn-danger full-width"
-                    onclick="borrarHistorial()">
-                    🗑️ Borrar Historial
-                    </button>
-</div>
+            
+                    <div class="card">
+                <h2>💧 Consumo Estimado</h2>
+            
+                <div class="data-row">
+                    <span>Zona 1</span>
+                    <span id="consumo1">0.0 L</span>
+                </div>
+            
+                <div class="data-row">
+                    <span>Zona 2</span>
+                    <span id="consumo2">0.0 L</span>
+                </div>
+            
+                <div class="data-row">
+                    <span>Zona 3</span>
+                    <span id="consumo3">0.0 L</span>
+                </div>
+            
+                <div class="data-row">
+                    <span>Zona 4</span>
+                    <span id="consumo4">0.0 L</span>
+                </div>
+            
+                <hr style="margin:10px 0">
+            
+                <div class="data-row">
+                    <strong>TOTAL</strong>
+                    <strong id="consumoTotal">0.0 L</strong>
+                </div>
+            </div>
 
         <div class="card" style="grid-column: 1 / -1;">
             <h2>📅 Configurar Horarios y Días de Riego</h2>
@@ -360,6 +376,21 @@ if(sessionStorage.getItem("logueado") !== "si"){
             </div>
             <button class="btn-danger full-width" onclick="guardarRedWiFi()">📡 Guardar y Reiniciar ESP32</button>
         </div>
+
+        <div class="card">
+                <h2>📋 Historial de Eventos</h2>
+
+                    <div id="historial"
+                         style="max-height:250px;
+                        overflow-y:auto;
+                        font-size:14px;">
+            </div>
+
+                <button class="btn-danger full-width"
+                    onclick="borrarHistorial()">
+                    🗑️ Borrar Historial
+                    </button>
+            </div>
 
     </div>
 
