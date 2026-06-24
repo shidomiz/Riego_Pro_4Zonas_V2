@@ -63,32 +63,37 @@ if(sessionStorage.getItem("logueado") !== "si"){
             transition: all 0.4s ease;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
+        .container{
+    max-width:1400px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+    align-items:stretch;
+}
 
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            border: 1px solid #2a2a2a;
-        }
+.card{
+    background-color:var(--card-bg);
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 4px 15px rgba(0,0,0,.5);
+    border:1px solid #2a2a2a;
 
-        .card h2 {
-            font-size: 1.2rem;
-            border-bottom: 2px solid #2a2a2a;
-            padding-bottom: 8px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    min-height:320px;
+    display:flex;
+    flex-direction:column;
+}
 
+.card h2{
+    min-height:40px;
+}
+
+@media(max-width:900px){
+    .container{
+        grid-template-columns:1fr;
+    }
+}
+       
         .data-row {
             display: flex;
             justify-content: space-between;
@@ -266,11 +271,13 @@ if(sessionStorage.getItem("logueado") !== "si"){
                  <div class="card">
                 <h2>📋 Historial de Eventos</h2>
 
-                    <div id="historial"
-                         style="max-height:250px;
-                        overflow-y:auto;
-                        font-size:14px;">
-            </div>
+                <div id="historial"
+                     style="
+                     min-height:180px;
+                     max-height:180px;
+                     overflow-y:auto;
+                     font-size:14px;">
+                </div>
 
                 <button class="btn-danger full-width"
                     onclick="borrarHistorial()">
