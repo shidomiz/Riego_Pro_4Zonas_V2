@@ -563,62 +563,63 @@ function alRecibirMensaje(message) {
         let data = JSON.parse(message.payloadString);  
 
         if(estadoAnterior.iniciado){
-                
-                ```
-                if(data.z1 !== estadoAnterior.z1){
-                    agregarEvento(
-                        "Zona 1 " +
-                        (data.z1 ? "ENCENDIDA" : "APAGADA")
-                    );
-                }
-                
-                if(data.z2 !== estadoAnterior.z2){
-                    agregarEvento(
-                        "Zona 2 " +
-                        (data.z2 ? "ENCENDIDA" : "APAGADA")
-                    );
-                }
-                
-                if(data.z3 !== estadoAnterior.z3){
-                    agregarEvento(
-                        "Zona 3 " +
-                        (data.z3 ? "ENCENDIDA" : "APAGADA")
-                    );
-                }
-                
-                if(data.z4 !== estadoAnterior.z4){
-                    agregarEvento(
-                        "Zona 4 " +
-                        (data.z4 ? "ENCENDIDA" : "APAGADA")
-                    );
-                }
-                
-                if(data.motor !== estadoAnterior.motor){
-                    agregarEvento(
-                        "Bomba " +
-                        (data.motor ? "ENCENDIDA" : "APAGADA")
-                    );
-                }
-                
-                if(data.auto !== estadoAnterior.auto){
-                    agregarEvento(
-                        "Modo Automático " +
-                        (data.auto ? "ACTIVADO" : "DESACTIVADO")
-                    );
-                }
-                ```
-                
-                }
-                
-                estadoAnterior = {
-                iniciado:true,
-                z1:data.z1,
-                z2:data.z2,
-                z3:data.z3,
-                z4:data.z4,
-                motor:data.motor,
-                auto:data.auto
-                };
+
+```
+if(data.z1 !== estadoAnterior.z1){
+    agregarEvento(
+        "Zona 1 " +
+        (data.z1 ? "ENCENDIDA" : "APAGADA")
+    );
+}
+
+if(data.z2 !== estadoAnterior.z2){
+    agregarEvento(
+        "Zona 2 " +
+        (data.z2 ? "ENCENDIDA" : "APAGADA")
+    );
+}
+
+if(data.z3 !== estadoAnterior.z3){
+    agregarEvento(
+        "Zona 3 " +
+        (data.z3 ? "ENCENDIDA" : "APAGADA")
+    );
+}
+
+if(data.z4 !== estadoAnterior.z4){
+    agregarEvento(
+        "Zona 4 " +
+        (data.z4 ? "ENCENDIDA" : "APAGADA")
+    );
+}
+
+if(data.motor !== estadoAnterior.motor){
+    agregarEvento(
+        "Bomba " +
+        (data.motor ? "ENCENDIDA" : "APAGADA")
+    );
+}
+
+if(data.auto !== estadoAnterior.auto){
+    agregarEvento(
+        "Modo Automático " +
+        (data.auto ? "ACTIVADO" : "DESACTIVADO")
+    );
+}
+```
+
+}
+
+estadoAnterior = {
+iniciado:true,
+z1:data.z1,
+z2:data.z2,
+z3:data.z3,
+z4:data.z4,
+motor:data.motor,
+auto:data.auto
+};
+
 
         document.getElementById("hora").innerText = data.hora;
 
