@@ -875,6 +875,12 @@ if(sessionStorage.getItem("logueado") !== "si"){
         function alRecibirMensaje(message) {
             if(message.destinationName === "riego_pro/estado") {
                 let data = JSON.parse(message.payloadString);  
+                
+                console.log("=== DATOS DEL ESP ===");
+                console.log("prog1:", data.prog1);
+                console.log("prog2:", data.prog2);
+                console.log("prog3:", data.prog3);
+                console.log("prog4:", data.prog4);
 
                 if(estadoAnterior.iniciado){
                     if(data.z1 !== estadoAnterior.z1){
