@@ -785,6 +785,42 @@ if(sessionStorage.getItem("logueado") !== "si"){
             }
         }
 
+        function generarCalendarioVisual(){
+
+    const cont = document.getElementById("calendarioVisual");
+
+    if(!cont) return;
+
+    cont.innerHTML = "";
+
+    const dias = [
+        "L","M","X","J","V","S","D"
+    ];
+
+    dias.forEach(d=>{
+        cont.innerHTML += `
+        <div style="
+        text-align:center;
+        font-weight:bold;
+        color:#3498db;">
+        ${d}
+        </div>`;
+    });
+
+    for(let i=1;i<=31;i++){
+
+        cont.innerHTML += `
+        <div style="
+        background:#252525;
+        border:1px solid #333;
+        border-radius:8px;
+        text-align:center;
+        padding:10px;">
+        ${i}
+        </div>`;
+    }
+}
+
         function enviarProgramacionWeb() {
             const zona = document.getElementById('prog_zona').value;
             const h1 = document.getElementById('p_h1').value || "0";
