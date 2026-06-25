@@ -14,6 +14,39 @@ if(sessionStorage.getItem("logueado") !== "si"){
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
     
     <style>
+        
+            #calendarioVisual{
+                display:grid;
+                grid-template-columns:repeat(7,1fr);
+                gap:8px;
+                margin-top:15px;
+            }
+            
+            .cal-dia{
+                background:#252525;
+                border:1px solid #333;
+                border-radius:10px;
+                min-height:45px;
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                color:white;
+                font-size:14px;
+                transition:0.3s;
+            }
+            
+            .cal-dia:hover{
+                background:#2e2e2e;
+                transform:scale(1.05);
+            }
+            
+            .cal-header{
+                text-align:center;
+                color:#4da6ff;
+                font-weight:bold;
+                padding:8px;
+            }   
+        
         :root {
             --bg-color: #121212;
             --card-bg: #1e1e1e;
@@ -753,38 +786,6 @@ if(sessionStorage.getItem("logueado") !== "si"){
             }
         }
 
-#calendarioVisual{
-    display:grid;
-    grid-template-columns:repeat(7,1fr);
-    gap:8px;
-    margin-top:15px;
-}
-
-.cal-dia{
-    background:#252525;
-    border:1px solid #333;
-    border-radius:10px;
-    min-height:45px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    color:white;
-    font-size:14px;
-    transition:0.3s;
-}
-
-.cal-dia:hover{
-    background:#2e2e2e;
-    transform:scale(1.05);
-}
-
-.cal-header{
-    text-align:center;
-    color:#4da6ff;
-    font-weight:bold;
-    padding:8px;
-}
-        
 function generarCalendarioVisual(){
 
     const cont = document.getElementById("calendarioVisual");
