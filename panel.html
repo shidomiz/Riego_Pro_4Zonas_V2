@@ -300,6 +300,20 @@ if(sessionStorage.getItem("logueado") !== "si"){
         </div>
 
         <div class="card">
+                <div class="card-content">
+                    <h2>🗓️ Calendario de Riego</h2>
+            
+                    <div id="calendarioVisual"
+                         style="
+                         display:grid;
+                         grid-template-columns:repeat(7,1fr);
+                         gap:6px;
+                         margin-top:10px;">
+                    </div>
+                </div>
+            </div>
+        
+        <div class="card">
             <div class="card-content">
                 <h2>🎮 Comando Remoto Manual</h2>
                 <div class="btn-grid">
@@ -772,7 +786,9 @@ if(sessionStorage.getItem("logueado") !== "si"){
             }
         }
 
-        function generarCalendarioVisual(){
+<script>
+
+function generarCalendarioVisual(){
 
     const cont = document.getElementById("calendarioVisual");
 
@@ -808,6 +824,9 @@ if(sessionStorage.getItem("logueado") !== "si"){
     }
 }
 
+generarCalendarioVisual();
+
+</script>
         function enviarProgramacionWeb() {
             const zona = document.getElementById('prog_zona').value;
             const h1 = document.getElementById('p_h1').value || "0";
@@ -840,6 +859,8 @@ function logout(){
     sessionStorage.removeItem("logueado");
     window.location.href="index.html";
 }
+    generarCalendarioVisual();
+    
 </script>
 </body>
 </html>
