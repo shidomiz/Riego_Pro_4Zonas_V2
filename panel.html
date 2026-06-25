@@ -792,7 +792,10 @@ function generarCalendarioVisual(){
 
     const cont = document.getElementById("calendarioVisual");
 
-    if(!cont) return;
+    if(!cont){
+        console.log("No existe calendarioVisual");
+        return;
+    }
 
     cont.innerHTML = "";
 
@@ -801,13 +804,16 @@ function generarCalendarioVisual(){
     ];
 
     dias.forEach(d=>{
+
         cont.innerHTML += `
         <div style="
         text-align:center;
         font-weight:bold;
-        color:#3498db;">
+        color:#3498db;
+        padding:5px;">
         ${d}
         </div>`;
+
     });
 
     for(let i=1;i<=31;i++){
@@ -818,51 +824,21 @@ function generarCalendarioVisual(){
         border:1px solid #333;
         border-radius:8px;
         text-align:center;
-        padding:10px;">
+        padding:10px;
+        min-height:40px;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        color:white;">
         ${i}
         </div>`;
+
     }
 }
 
-<script>
-
-function generarCalendarioVisual(){
-
-    const cont = document.getElementById("calendarioVisual");
-
-    if(!cont) return;
-
-    cont.innerHTML = "";
-
-    const dias = [
-        "L","M","X","J","V","S","D"
-    ];
-
-    dias.forEach(d=>{
-        cont.innerHTML += `
-        <div style="
-        text-align:center;
-        font-weight:bold;
-        color:#3498db;">
-        ${d}
-        </div>`;
-    });
-
-    for(let i=1;i<=31;i++){
-
-        cont.innerHTML += `
-        <div style="
-        background:#252525;
-        border:1px solid #333;
-        border-radius:8px;
-        text-align:center;
-        padding:10px;">
-        ${i}
-        </div>`;
-    }
-}
-
-generarCalendarioVisual();
+window.onload = function(){
+    generarCalendarioVisual();
+};
 
 </script>
 </body>
