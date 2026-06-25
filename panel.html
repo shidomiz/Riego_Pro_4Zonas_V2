@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="es"> 
+<head>
+
+<script>
+if(sessionStorage.getItem("logueado") !== "si"){
+    window.location.href = "index.html";
+}
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Riego Inteligente 4 Zonas</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+    
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --text-muted: #aaaaaa;
+            --primary: #3498db;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f1c40f;
+            --calendar-active: #27ae60;
+            --calendar-today: #2980b9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+        }
+
+        header {
+            max-width: 1400px;
+            margin: 0 auto 20px auto;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--success);
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        #statusBar {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto 20px auto;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            background-color: var(--warning);
+            color: black;
+            transition: all 0.4s ease;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.5);
+            border: 1px solid #2a2a2a;
+            
+            /* Alto fijo original para las tarjetas superiores */
+            height: 380px; 
+            
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Regla especial para que el calendario sea flexible */
+        .card.full-width {
+            grid-column: 1 / -1;
+            height: auto; 
+            min-height: auto;
+        }
+
+        .card-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .card h2 {
+            min-height: 40px;
+            margin-bottom: 10px;
+        }
+
+        @media(max-width:900px){
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .card {
+                height: auto;
+            }
+        }
+        
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .data-label {
+            color: var(--text-muted);
+        }
+
+        .data-value {
+            font-weight: bold;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: var(--primary);
+            color: white;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button.btn-danger {
+            background-color: var(--danger);
+        }
+
+        button.btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        button.btn-success {
+            background-color: var(--success);
+        }
+
+        button.btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        /* --- ESTILOS DEL CALENDARIO --- */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+        .calendar-nav button {
+            padding: 5px 12px;
+            background: #252525;
+            border: 1px solid #333;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .calendar-day-name {
+            font-weight: bold;
+            color: var(--success);
+            font-size: 0.85rem;
+            padding-bottom: 5px;
+        }
+        .calendar-cell {
+            background: #181818;
+            border: 1px solid #252525;
+            border-radius: 6px;
+            padding: 12px 5px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            position: relative;
+            min-height: 55px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+        .calendar-cell:hover {
+            background: #222;
+        }
+        .calendar-cell.other-month {
+            color: #444;
+            cursor: not-allowed;
+        }
+        .calendar-cell.riego-si {
+            background: rgba(46, 204, 113, 0.2);
+            border-color: var(--success);
+        }
+        .calendar-cell.riego-si::after {
+            content: "🌱";
+            font-size: 11px;
+            margin-top: 2px;
+        }
+        .calendar-cell.today {
+            border: 2px solid var(--primary);
+        }
+        .calendar-cell.today::before {
+            content: "";
+            position: absolute;
+            bottom: 4px;
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+        .calendar-cell.selected {
+            outline: 2px solid #fff;
+        }
+        .calendar-legend {
+            display: flex;
+            gap: 20px;
+            font-size: 0.85rem;
+            background: #181818;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .calendar-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            background: #151515;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #252525;
+            margin-bottom: 15px;
+        }
+        @media(max-width: 600px) {
+            .calendar-details { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+        <div>
+            <h1>SISTEMA DE RIEGO INTELIGENTE</h1>
+            <p style="color: var(--text-muted)">Monitoreo MQTT y Telemetría en Tiempo Real</p>
+        </div>
+
+        <button onclick="logout()" class="btn-danger">
+            🚪 Salir
+        </button>
+    </div>
+</header>
+
+    <div id="statusBar">⏳ CONECTANDO AL BROKER MQTT...</div>
+
+    <div class="container">
+
+        <div class="card">
+            <div class="card-content">
+                <h2>⚙️ Estado General</h2>
+                <div class="data-row">
+                    <span class="data-label">Hora del RTC:</span>
+                    <span class="data-value" id="hora">--/-- --:--:--</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Modo Automático:</span>
+                    <span class="data-value" id="auto">🔴 DESHABILITADO</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Sensor de Lluvia:</span>
+                    <span class="data-value" id="lluvia">☀️ SECO</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Bomba Hidráulica:</span>
+                    <span class="data-value" id="motor">🔴 PARADO</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-content">
+                <h2>🌦 Clima</h2>
+                <div class="data-row">
+                    <span class="data-label">🌡 Temperatura:</span>
+                    <span class="data-value" id="temp">-- °C</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">🌧 Prob. lluvia:</span>
+                    <span class="data-value" id="rainChance">-- %</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">📍 Estado:</span>
+                    <span class="data-value" id="rainStatus">Consultando...</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">🕒 Actualizado:</span>
+                    <span class="data-value" id="climaHora">--:--</span>
+                </div>
+            </div>
+        </div>
+     
+        <div class="card">
+            <div class="card-content">
+                <h2>🌱 Válvulas de Riego</h2>
+                <div class="data-row">
+                    <span class="data-label" id="nombre1p">Zona 1</span>
+                    <span class="data-value" id="z1">🔴 APAGADA</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label" id="nombre2p">Zona 2</span>
+                    <span class="data-value" id="z2">🔴 APAGADA</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label" id="nombre3p">Zona 3</span>
+                    <span class="data-value" id="z3">🔴 APAGADA</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label" id="nombre4p">Zona 4</span>
+                    <span class="data-value" id="z4">🔴 APAGADA</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2>📅 Tiempos Programados</h2>
+                <div class="data-row">
+                    <span class="data-label" id="nombre1">Zona 1:</span>
+                    <span class="data-value" id="prog1">Cargando...</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label" id="nombre2">Zona 2:</span>
+                    <span class="data-value" id="prog2">Cargando...</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label" id="nombre3">Zona 3:</span>
+                    <span class="data-value" id="prog3">Cargando...</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label" id="nombre4">Zona 4:</span>
+                    <span class="data-value" id="prog4">Cargando...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2>🎮 Comando Remoto Manual</h2>
+                <div class="btn-grid">
+                    <button onclick="enviar('riego_pro/comando', 'Z1_TOGGLE')">Alternar Z1</button>
+                    <button onclick="enviar('riego_pro/comando', 'Z2_TOGGLE')">Alternar Z2</button>
+                    <button onclick="enviar('riego_pro/comando', 'Z3_TOGGLE')">Alternar Z3</button>
+                    <button onclick="enviar('riego_pro/comando', 'Z4_TOGGLE')">Alternar Z4</button>
+                    
+                    <button class="btn-success" onclick="enviar('riego_pro/comando', 'AUTO_ON')">🤖 AUTO ON</button>
+                    <button class="btn-danger" onclick="enviar('riego_pro/comando', 'AUTO_OFF')">🤖 AUTO OFF</button>
+                    
+                    <button class="btn-danger style="grid-column: 1 / -1; margin-top: 10px;" onclick="enviar('riego_pro/comando', 'STOP_ALL')">🛑 APAGAR TODO</button>
+                </div>
+            </div>
+        </div>
+            
+        <div class="card">
+            <div class="card-content">
+                <h2>📋 Historial de Eventos</h2>
+                <div id="historial" style="min-height:140px; max-height:140px; overflow-y:auto; font-size:14px; margin-bottom: 10px;"></div>
+            </div>
+            <button class="btn-danger" style="width:100%;" onclick="borrarHistorial()">🗑️ Borrar Historial</button>
+        </div>
+        
+        <div class="card">
+            <div class="card-content">
+                <h2>🏷️ Nombres de Zonas</h2>
+                <div class="form-group" style="margin-bottom: 6px;">
+                    <label style="font-size:0.9rem;">Zona 1:</label>
+                    <input type="text" id="input_nz1" style="width: 100%; padding: 6px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 6px;">
+                    <label style="font-size:0.9rem;">Zona 2:</label>
+                    <input type="text" id="input_nz2" style="width: 100%; padding: 6px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 6px;">
+                    <label style="font-size:0.9rem;">Zona 3:</label>
+                    <input type="text" id="input_nz3" style="width: 100%; padding: 6px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label style="font-size:0.9rem;">Zona 4:</label>
+                    <input type="text" id="input_nz4" style="width: 100%; padding: 6px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+                </div>
+            </div>
+            <button class="btn-success" style="width:100%;" onclick="guardarNombresZonas()">💾 Guardar Nombres</button>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <h2>💧 Consumo Estimado</h2>
+                <div class="data-row">
+                    <span>Zona 1</span>
+                    <span id="consumo1">0.0 L</span>
+                </div>
+                <div class="data-row">
+                    <span>Zona 2</span>
+                    <span id="consumo2">0.0 L</span>
+                </div>
+                <div class="data-row">
+                    <span>Zona 3</span>
+                    <span id="consumo3">0.0 L</span>
+                </div>
+                <div class="data-row">
+                    <span>Zona 4</span>
+                    <span id="consumo4">0.0 L</span>
+                </div>
+                <hr style="margin:8px 0; border: 0; border-top: 1px solid #444;">
+                <div class="data-row">
+                    <strong>TOTAL</strong>
+                    <strong id="consumoTotal">0.0 L</strong>
+                </div>
+            </div>
+        </div>
+    
+        <div class="card">
+            <div class="card-content">
+                <h2>⚙️ Caudal por Zona</h2>
+                <div class="data-row">
+                    <span>Zona 1</span>
+                    <input id="caudal1" type="number" value="8" style="width:80px; background: #2b2b2b; color: white; border: 1px solid #444; padding: 4px; border-radius: 4px;">
+                </div>
+                <div class="data-row">
+                    <span>Zona 2</span>
+                    <input id="caudal2" type="number" value="8" style="width:80px; background: #2b2b2b; color: white; border: 1px solid #444; padding: 4px; border-radius: 4px;">
+                </div>
+                <div class="data-row">
+                    <span>Zona 3</span>
+                    <input id="caudal3" type="number" value="8" style="width:80px; background: #2b2b2b; color: white; border: 1px solid #444; padding: 4px; border-radius: 4px;">
+                </div>
+                <div class="data-row">
+                    <span>Zona 4</span>
+                    <input id="caudal4" type="number" value="8" style="width:80px; background: #2b2b2b; color: white; border: 1px solid #444; padding: 4px; border-radius: 4px;">
+                </div>
+            </div>
+            <button class="btn-success" style="width:100%;" onclick="guardarCaudales()">💾 Guardar Caudales</button>
+        </div>
+        
+        <div class="card">
+            <div class="card-content">
+                <h2>🌐 Configuración de Red</h2>
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label>Nombre de Red (SSID):</label>
+                    <input type="text" id="input_ssid" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Contraseña WiFi:</label>
+                    <input type="password" id="input_wfifipass" placeholder="••••••••" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+                </div>
+            </div>
+            <button class="btn-danger" style="width:100%;" onclick="guardarRedWiFi()">📡 Guardar y Reiniciar ESP32</button>
+        </div>
+
+        <div class="card full-width">
+            <div class="calendar-header">
+                <div>
+                    <h2>📅 Calendario de Riego</h2>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Días programados para riego automático</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <h3 id="calendarMonthYear" style="color: var(--success); font-size: 1.2rem;">---</h3>
+                    <div class="calendar-nav">
+                        <button onclick="cambiarMes(-1)">&lt;</button>
+                        <button onclick="cambiarMes(1)">&gt;</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calendar-legend">
+                <div class="legend-item"><div class="legend-dot" style="background: var(--success)"></div> Con riego</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #181818; border: 1px solid #333;"></div> Sin riego</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--primary)"></div> Hoy</div>
+                
+                <div style="margin-left: auto;">
+                    <label style="font-weight: bold; font-size: 0.85rem;">Ver Zona: </label>
+                    <select id="cal_zona_selector" onchange="renderizarCalendario()" style="background: #2b2b2b; color: white; border: 1px solid #444; padding: 3px; border-radius: 4px;">
+                        <option value="1">Zona 1</option>
+                        <option value="2">Zona 2</option>
+                        <option value="3">Zona 3</option>
+                        <option value="4">Zona 4</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="calendar-grid" id="calendarGrid">
+                </div>
+
+            <div class="calendar-details">
+                <div>
+                    <h4 style="color: var(--success); margin-bottom: 8px;">Detail del día seleccionado</h4>
+                    <p id="det_fecha" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 5px;">Selecciona un día</p>
+                    <p id="det_estado" style="color: var(--text-muted);">---</p>
+                </div>
+                <div>
+                    <h4 style="color: var(--success); margin-bottom: 8px;">Configurar turnos para la zona activa</h4>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <div style="background: #252525; padding: 6px 10px; border-radius: 6px; border: 1px solid #333; flex: 1; min-width: 140px;">
+                            <label style="font-weight: bold; color: var(--primary); font-size: 0.75rem;">⏱️ TURNO 1:</label>
+                            <div style="display: flex; gap: 3px; margin-top: 3px;">
+                                <input type="number" id="p_h1" min="0" max="23" placeholder="H" style="width:33%; text-align:center; background:#111; color:white; border:1px solid #444;">
+                                <input type="number" id="p_m1" min="0" max="59" placeholder="M" style="width:33%; text-align:center; background:#111; color:white; border:1px solid #444;">
+                                <input type="number" id="p_d1" min="0" max="120" placeholder="Min" style="width:34%; text-align:center; background:#1e3d59; color:white; border:none;">
+                            </div>
+                        </div>
+                        <div style="background: #252525; padding: 6px 10px; border-radius: 6px; border: 1px solid #333; flex: 1; min-width: 140px;">
+                            <label style="font-weight: bold; color: var(--primary); font-size: 0.75rem;">⏱️ TURNO 2:</label>
+                            <div style="display: flex; gap: 3px; margin-top: 3px;">
+                                <input type="number" id="p_h2" min="0" max="23" placeholder="H" style="width:33%; text-align:center; background:#111; color:white; border:1px solid #444;">
+                                <input type="number" id="p_m2" min="0" max="59" placeholder="M" style="width:33%; text-align:center; background:#111; color:white; border:1px solid #444;">
+                                <input type="number" id="p_d2" min="0" max="120" placeholder="Min" style="width:34%; text-align:center; background:#1e3d59; color:white; border:none;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 15px; margin-bottom: 15px; background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333; align-items:center;">
+                <label style="font-weight: bold; color: var(--warning); font-size:0.9rem;">🗓️ Días globales de riego:</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 12px;" id="checkboxes_dias">
+                    <label><input type="checkbox" class="chk-dia" value="1"> Lun</label>
+                    <label><input type="checkbox" class="chk-dia" value="2"> Mar</label>
+                    <label><input type="checkbox" class="chk-dia" value="3"> Mié</label>
+                    <label><input type="checkbox" class="chk-dia" value="4"> Jue</label>
+                    <label><input type="checkbox" class="chk-dia" value="5"> Vie</label>
+                    <label><input type="checkbox" class="chk-dia" value="6"> Sáb</label>
+                    <label><input type="checkbox" class="chk-dia" value="7"> Dom</label>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <button class="btn-danger" style="background:#2c2c2c;" onclick="enviar('riego_pro/comando', 'GET_STATUS')">🔄 Actualizar</button>
+                <button class="btn-success" onclick="enviarProgramacionWeb()">💾 Guardar Cambios en ESP32</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+        const broker = "636db169bfd3417bbe1d3c0409e44f3e.s1.eu.hivemq.cloud"; 
+        const puerto = 8884; 
+        const usuario = "Riego_Pro_V4";
+        const contrasena = "Nico159+++";
+     
+        const clientId = "web_client_" + Math.random().toString(16).substr(2, 8);
+        const statusBar = document.getElementById('statusBar');
+
+        const client = new Paho.MQTT.Client(broker, puerto, clientId);
+
+        let fechaActualCalendario = new Date();
+        let zonaMascaras = { 1: 0, 2: 0, 3: 0, 4: 0 }; 
+        let turnosZonas = { 1: "", 2: "", 3: "", 4: "" };
+
+        const opcionesConexion = {
+            useSSL: true,
+            userName: usuario,
+            password: contrasena,
+            onSuccess: alConectar,
+            onFailure: alFallarConexion,
+            keepAliveInterval: 60,
+            cleanSession: true,
+            mqttVersion: 4
+        };
+
+        client.connect(opcionesConexion);
+        client.onMessageArrived = alRecibirMensaje;
+        client.onConnectionLost = alPerderConexion;
+
+        function alConectar() {
+            console.log('MQTT conectado.');
+            statusBar.innerText = "🟢 CONECTADO ONLINE";
+            client.subscribe("#");
+            client.subscribe('riego_pro/estado');
+            enviar('riego_pro/comando', 'GET_STATUS');
+        }
+
+        function alFallarConexion(error) {
+            statusBar.innerText = "🔴 ERROR DE CONEXIÓN: " + error.errorMessage;
+            statusBar.style.background = "#e74c3c";
+            statusBar.style.color = "white";
+        }
+
+        function alPerderConexion(responseObject) {
+            if (responseObject.errorCode !== 0) {
+                statusBar.innerText = "🔴 DESCONECTADO (Reconectando...)";
+                statusBar.style.background = "#e74c3c";
+                statusBar.style.color = "white";
+            }
+        }
+
+        function enviar(topic, mensaje) {
+            if (!client.isConnected()) {
+                alert("No estás conectado al broker MQTT.");
+                return;
+            }
+            const message = new Paho.MQTT.Message(mensaje);
+            message.destinationName = topic;
+            message.qos = 1;
+            client.send(message);
+            
+            const originalText = statusBar.innerText;
+            const originalBg = statusBar.style.background;
+            const originalColor = statusBar.style.color;
+            
+            statusBar.innerText = `⚡ ENVIADO: ${mensaje} A ${topic.toUpperCase()}`;
+            statusBar.style.background = "#3498db";
+            statusBar.style.color = "white";
+            
+            setTimeout(() => {
+                statusBar.innerText = originalText;
+                statusBar.style.background = originalBg;
+                statusBar.style.color = originalColor;
+            }, 2000);
+        }
+
+        /* --- LÓGICA DEL CALENDARIO --- */
+        const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        const nombresDias = ["LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB", "DOM"];
+
+        function renderizarCalendario() {
+            const grid = document.getElementById("calendarGrid");
+            const monthYearText = document.getElementById("calendarMonthYear");
+            grid.innerHTML = "";
+
+            const año = fechaActualCalendario.getFullYear();
+            const mes = fechaActualCalendario.getMonth();
+
+            monthYearText.innerText = `${nombresMeses[mes]} ${año}`;
+
+            nombresDias.forEach(dia => {
+                const div = document.createElement("div");
+                div.className = "calendar-day-name";
+                div.innerText = dia;
+                grid.appendChild(div);
+            });
+
+            let primerDiaIndex = new Date(año, mes, 1).getDay() - 1;
+            if (primerDiaIndex === -1) primerDiaIndex = 6; 
+
+            const totalDiasMes = new Date(año, mes + 1, 0).getDate();
+            const totalDiasMesAnterior = new Date(año, mes, 0).getDate();
+
+            const zonaSeleccionada = document.getElementById("cal_zona_selector").value;
+            const mascaraActiva = zonaMascaras[zonaSeleccionada];
+
+            for (let i = primerDiaIndex; i > 0; i--) {
+                const div = document.createElement("div");
+                div.className = "calendar-cell other-month";
+                div.innerText = totalDiasMesAnterior - i + 1;
+                grid.appendChild(div);
+            }
+
+            const hoy = new Date();
+            for (let dia = 1; dia <= totalDiasMes; dia++) {
+                const div = document.createElement("div");
+                div.className = "calendar-cell";
+                div.innerText = dia;
+
+                const fechaCelda = new Date(año, mes, dia);
+                
+                let dayOfWeek = fechaCelda.getDay();
+                if (dayOfWeek === 0) dayOfWeek = 7;
+
+                if ((mascaraActiva & (1 << dayOfWeek)) !== 0) {
+                    div.classList.add("riego-si");
+                }
+
+                if (fechaCelda.getDate() === hoy.getDate() && fechaCelda.getMonth() === hoy.getMonth() && fechaCelda.getFullYear() === hoy.getFullYear()) {
+                    div.classList.add("today");
+                }
+
+                div.onclick = () => {
+                    document.querySelectorAll('.calendar-cell').forEach(c => c.classList.remove('selected'));
+                    div.classList.add('selected');
+                    actualizarDetalleDia(fechaCelda, ((mascaraActiva & (1 << dayOfWeek)) !== 0));
+                };
+
+                grid.appendChild(div);
+            }
+
+            const celdasTotales = grid.children.length - 7; 
+            const celdasRestantes = 42 - celdasTotales; 
+            for (let i = 1; i <= celdasRestantes; i++) {
+                const div = document.createElement("div");
+                div.className = "calendar-cell other-month";
+                div.innerText = i;
+                grid.appendChild(div);
+            }
+        }
+
+        function cambiarMes(direccion) {
+            fechaActualCalendario.setMonth(fechaActualCalendario.getMonth() + direccion);
+            renderizarCalendario();
+        }
+
+        function actualizarDetalleDia(fecha, tieneRiego) {
+            const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById("det_fecha").innerText = fecha.toLocaleDateString('es-ES', opciones);
+            
+            const zonaNum = document.getElementById("cal_zona_selector").value;
+            const infoTurno = turnosZonas[zonaNum] || "No cargado";
+
+            if (tieneRiego) {
+                document.getElementById("det_estado").innerHTML = `🌱 <span style="color:var(--success); font-weight:bold;">Riego Automático Activo</span><br><small style="color:#aaa;">Configuración: ${infoTurno}</small>`;
+            } else {
+                document.getElementById("det_estado").innerHTML = `❌ <span style="color:var(--danger); font-weight:bold;">Sin riego programado</span>`;
+            }
+        }
+
+        function parsearMascaraDesdeTexto(progTexto) {
+            let mask = 0;
+            if(!progTexto) return mask;
+            if(progTexto.includes("Lun")) mask |= (1 << 1);
+            if(progTexto.includes("Mar")) mask |= (1 << 2);
+            if(progTexto.includes("Mie") || progTexto.includes("Mié")) mask |= (1 << 3);
+            if(progTexto.includes("Jue")) mask |= (1 << 4);
+            if(progTexto.includes("Vie")) mask |= (1 << 5);
+            if(progTexto.includes("Sab") || progTexto.includes("Sáb")) mask |= (1 << 6);
+            if(progTexto.includes("Dom")) mask |= (1 << 7);
+            return mask;
+        }
+
+        /* --- HISTORIAL Y CONSUMO --- */
+        function guardarNombresZonas() {
+            const nz1 = document.getElementById('input_nz1').value.trim();
+            const nz2 = document.getElementById('input_nz2').value.trim();
+            const nz3 = document.getElementById('input_nz3').value.trim();
+            const nz4 = document.getElementById('input_nz4').value.trim();
+            if(!nz1 || !nz2 || !nz3 || !nz4) { alert("Completa todos los campos."); return; }
+            enviar('riego_pro/comando', `SET_NAMES,${nz1},${nz2},${nz3},${nz4}`);
+        }
+
+        function guardarRedWiFi() {
+            const ssid = document.getElementById('input_ssid').value.trim();
+            const pass = document.getElementById('input_wfifipass').value.trim();
+            if(!ssid || !pass) { alert("Ingresa SSID y contraseña."); return; }
+            if(confirm("¿Reiniciar ESP32 para conectar a la nueva red?")) {
+                enviar('riego_pro/comando', `SET_WIFI,${ssid},${pass}`);
+            }
+        }
+
+        let historialEventos = JSON.parse(localStorage.getItem("historial")) || [];
+        let estadoAnterior = { iniciado:false, z1:false, z2:false, z3:false, z4:false, motor:false, auto:false };
+        
+        function agregarEvento(texto){
+            const ahora = new Date();
+            const fecha = ahora.toLocaleDateString("es-AR") + " " + ahora.toLocaleTimeString("es-AR");
+            historialEventos.unshift(fecha + " - " + texto);
+            if(historialEventos.length > 100) historialEventos.pop();
+            localStorage.setItem("historial", JSON.stringify(historialEventos));
+            mostrarHistorial();
+        }
+        
+        function mostrarHistorial(){
+            const div = document.getElementById("historial");
+            if(!div) return;
+            div.innerHTML = historialEventos.map(e => `<div style="margin-bottom:6px">${e}</div>`).join("");
+        }
+        
+        function borrarHistorial(){
+            if(confirm("¿Borrar historial completo?")){
+                historialEventos = [];
+                localStorage.removeItem("historial");
+                mostrarHistorial();
+            }
+        }
+
+        let consumo = JSON.parse(localStorage.getItem("consumo")) || { z1:0, z2:0, z3:0, z4:0 };
+        let inicioZona = { z1:null, z2:null, z3:null, z4:null };
+
+        function guardarCaudales(){
+            localStorage.setItem("caudales", JSON.stringify({
+                z1:parseFloat(document.getElementById("caudal1").value)||0,
+                z2:parseFloat(document.getElementById("caudal2").value)||0,
+                z3:parseFloat(document.getElementById("caudal3").value)||0,
+                z4:parseFloat(document.getElementById("caudal4").value)||0
+            }));
+            alert("Caudales guardados");
+        }
+
+        function obtenerCaudales(){
+            return JSON.parse(localStorage.getItem("caudales")) || { z1:8, z2:8, z3:8, z4:8 };
+        }
+
+        function actualizarConsumoUI(){
+            document.getElementById("consumo1").innerText = consumo.z1.toFixed(1) + " L";
+            document.getElementById("consumo2").innerText = consumo.z2.toFixed(1) + " L";
+            document.getElementById("consumo3").innerText = consumo.z3.toFixed(1) + " L";
+            document.getElementById("consumo4").innerText = consumo.z4.toFixed(1) + " L";
+            let total = consumo.z1 + consumo.z2 + consumo.z3 + consumo.z4;
+            document.getElementById("consumoTotal").innerText = total.toFixed(1) + " L";
+        }
+
+        mostrarHistorial();
+        actualizarConsumoUI();
+        renderizarCalendario();
+        
+        function alRecibirMensaje(message) {
+            if(message.destinationName === "riego_pro/estado") {
+                let data = JSON.parse(message.payloadString);  
+
+                if(estadoAnterior.iniciado){
+                    if(data.z1 !== estadoAnterior.z1){
+                        agregarEvento("Zona 1 " + (data.z1 ? "ENCENDIDA" : "APAGADA"));
+                        if(data.z1) { inicioZona.z1 = Date.now(); } else if(inicioZona.z1){
+                            consumo.z1 += ((Date.now() - inicioZona.z1) / 60000) * obtenerCaudales().z1;
+                            localStorage.setItem("consumo", JSON.stringify(consumo));
+                            actualizarConsumoUI();
+                        }
+                    }
+                    if(data.z2 !== estadoAnterior.z2){
+                        agregarEvento("Zona 2 " + (data.z2 ? "ENCENDIDA" : "APAGADA"));
+                        if(data.z2) { inicioZona.z2 = Date.now(); } else if(inicioZona.z2){
+                            consumo.z2 += ((Date.now() - inicioZona.z2) / 60000) * obtenerCaudales().z2;
+                            localStorage.setItem("consumo", JSON.stringify(consumo));
+                            actualizarConsumoUI();
+                        }
+                    }
+                    if(data.z3 !== estadoAnterior.z3){
+                        agregarEvento("Zona 3 " + (data.z3 ? "ENCENDIDA" : "APAGADA"));
+                        if(data.z3) { inicioZona.z3 = Date.now(); } else if(inicioZona.z3){
+                            consumo.z3 += ((Date.now() - inicioZona.z3) / 60000) * obtenerCaudales().z3;
+                            localStorage.setItem("consumo", JSON.stringify(consumo));
+                            actualizarConsumoUI();
+                        }
+                    }
+                    if(data.z4 !== estadoAnterior.z4){
+                        agregarEvento("Zona 4 " + (data.z4 ? "ENCENDIDA" : "APAGADA"));
+                        if(data.z4) { inicioZona.z4 = Date.now(); } else if(inicioZona.z4){
+                            consumo.z4 += ((Date.now() - inicioZona.z4) / 60000) * obtenerCaudales().z4;
+                            localStorage.setItem("consumo", JSON.stringify(consumo));
+                            actualizarConsumoUI();
+                        }
+                    }
+                    if(data.motor !== estadoAnterior.motor) agregarEvento("Bomba " + (data.motor ? "ENCENDIDA" : "APAGADA"));
+                    if(data.auto !== estadoAnterior.auto) agregarEvento("Modo Automático " + (data.auto ? "ACTIVADO" : "DESACTIVADO"));
+                }
+
+                estadoAnterior = { iniciado:true, z1:data.z1, z2:data.z2, z3:data.z3, z4:data.z4, motor:data.motor, auto:data.auto };
+
+                document.getElementById("hora").innerText = data.hora;
+                document.getElementById("auto").innerText = data.auto ? "🟢 HABILITADO" : "🔴 DESHABILITADO";
+                document.getElementById("motor").innerText = data.motor ? "🟢 ENCENDIDA" : "🔴 PARADO";
+                document.getElementById("lluvia").innerText = data.lluvia ? "🌧️ LLUVIA" : "☀️ SECO";
+                
+                if(document.getElementById("temp")){ document.getElementById("temp").innerHTML = (data.temp ?? 0).toFixed(1) + " °C"; }
+                if(document.getElementById("rainChance")){ document.getElementById("rainChance").innerHTML = (data.rainChance ?? 0) + " %"; }
+                if(document.getElementById("rainStatus")){ document.getElementById("rainStatus").innerHTML = data.rainBlock ? "🌧️ Riego suspendido" : "✅ Riego habilitado"; }
+                
+                document.getElementById("z1").innerText = data.z1 ? "🟢 ENCENDIDA" : "🔴 APAGADA";
+                document.getElementById("z2").innerText = data.z2 ? "🟢 ENCENDIDA" : "🔴 APAGADA";
+                document.getElementById("z3").innerText = data.z3 ? "🟢 ENCENDIDA" : "🔴 APAGADA";
+                document.getElementById("z4").innerText = data.z4 ? "🟢 ENCENDIDA" : "🔴 APAGADA";
+
+                document.getElementById("prog1").innerText = data.prog1;
+                document.getElementById("prog2").innerText = data.prog2;
+                document.getElementById("prog3").innerText = data.prog3;
+                document.getElementById("prog4").innerText = data.prog4;
+
+                zonaMascaras[1] = parsearMascaraDesdeTexto(data.prog1);
+                zonaMascaras[2] = parsearMascaraDesdeTexto(data.prog2);
+                zonaMascaras[3] = parsearMascaraDesdeTexto(data.prog3);
+                zonaMascaras[4] = parsearMascaraDesdeTexto(data.prog4);
+
+                turnosZonas[1] = data.prog1;
+                turnosZonas[2] = data.prog2;
+                turnosZonas[3] = data.prog3;
+                turnosZonas[4] = data.prog4;
+
+                document.getElementById("nombre1").innerText = data.name_z1 + ":";
+                document.getElementById("nombre2").innerText = data.name_z2 + ":";
+                document.getElementById("nombre3").innerText = data.name_z3 + ":";
+                document.getElementById("nombre4").innerText = data.name_z4 + ":";
+                document.getElementById("nombre1p").innerText = data.name_z1;
+                document.getElementById("nombre2p").innerText = data.name_z2;
+                document.getElementById("nombre3p").innerText = data.name_z3;
+                document.getElementById("nombre4p").innerText = data.name_z4;
+
+                document.getElementById("input_nz1").value = data.name_z1;
+                document.getElementById("input_nz2").value = data.name_z2;
+                document.getElementById("input_nz3").value = data.name_z3;
+                document.getElementById("input_nz4").value = data.name_z4;
+
+                renderizarCalendario();
+            }
+        }
+
+        function enviarProgramacionWeb() {
+            const zona = document.getElementById('cal_zona_selector').value;
+            const h1 = document.getElementById('p_h1').value || "0";
+            const m1 = document.getElementById('p_m1').value || "0";
+            const d1 = document.getElementById('p_d1').value || "0";
+            const h2 = document.getElementById('p_h2').value || "0";
+            const m2 = document.getElementById('p_m2').value || "0";
+            const d2 = document.getElementById('p_d2').value || "0";
+
+            let diasMascara = 0;
+            const checkboxes = document.querySelectorAll('.chk-dia');
+            checkboxes.forEach(chk => {
+                if (chk.checked) {
+                    diasMascara |= (1 << parseInt(chk.value));
+                }
+            });
+
+            if (diasMascara === 0) {
+                alert("Por favor, selecciona al menos un día de la semana para el riego.");
+                return;
+            }
+
+            const comando = `SET_PROG,${zona},${h1},${m1},${d1},${h2},${m2},${d2},${diasMascara}`;
+            enviar('riego_pro/comando', comando);
+        }
+    </script>
+
+<script>
+function logout(){
+    sessionStorage.removeItem("logueado");
+    window.location.href="index.html";
+}
+</script>
+</body>
+</html>
