@@ -199,19 +199,9 @@ if(sessionStorage.getItem("logueado") !== "si"){
             padding-bottom: 5px;
         }
         .calendar-cell {
-            background: #181818;
-            border: 1px solid #252525;
-            border-radius: 6px;
-            padding: 12px 5px;
-            font-size: 0.95rem;
-            cursor: pointer;
-            position: relative;
-            min-height: 55px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            transition: background 0.2s;
+            background: #252525;
+            border: 1px solid #333;
+            color: #ddd;
         }
         .calendar-cell:hover {
             background: #222;
@@ -221,16 +211,21 @@ if(sessionStorage.getItem("logueado") !== "si"){
             cursor: not-allowed;
         }
         .calendar-cell.riego-si {
-            background: rgba(46, 204, 113, 0.2);
-            border-color: var(--success);
+            background: #1f5c35;
+            border: 2px solid #2ecc71;
+            color: white;
         }
         .calendar-cell.riego-si::after {
             content: "🌱";
             font-size: 11px;
             margin-top: 2px;
         }
-        .calendar-cell.today {
-            border: 2px solid var(--primary);
+        .calendar-cell.today.riego-si {
+            background: linear-gradient(
+                135deg,
+                #1b4f72 50%,
+                #1f5c35 50%
+            );
         }
         .calendar-cell.today::before {
             content: "";
@@ -242,7 +237,9 @@ if(sessionStorage.getItem("logueado") !== "si"){
             border-radius: 50%;
         }
         .calendar-cell.selected {
-            outline: 2px solid #fff;
+            background: #7d6608 !important;
+            border: 2px solid #f1c40f !important;
+            color: white;
         }
         .calendar-legend {
             display: flex;
