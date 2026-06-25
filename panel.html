@@ -199,9 +199,19 @@ if(sessionStorage.getItem("logueado") !== "si"){
             padding-bottom: 5px;
         }
         .calendar-cell {
-            background: #252525;
-            border: 1px solid #333;
-            color: #ddd;
+            background: #181818;
+            border: 1px solid #252525;
+            border-radius: 6px;
+            padding: 12px 5px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            position: relative;
+            min-height: 55px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
         }
         .calendar-cell:hover {
             background: #222;
@@ -211,21 +221,16 @@ if(sessionStorage.getItem("logueado") !== "si"){
             cursor: not-allowed;
         }
         .calendar-cell.riego-si {
-            background: #1f5c35;
-            border: 2px solid #2ecc71;
-            color: white;
+            background: rgba(46, 204, 113, 0.2);
+            border-color: var(--success);
         }
         .calendar-cell.riego-si::after {
             content: "🌱";
             font-size: 11px;
             margin-top: 2px;
         }
-        .calendar-cell.today.riego-si {
-            background: linear-gradient(
-                135deg,
-                #1b4f72 50%,
-                #1f5c35 50%
-            );
+        .calendar-cell.today {
+            border: 2px solid var(--primary);
         }
         .calendar-cell.today::before {
             content: "";
@@ -237,9 +242,7 @@ if(sessionStorage.getItem("logueado") !== "si"){
             border-radius: 50%;
         }
         .calendar-cell.selected {
-            background: #7d6608 !important;
-            border: 2px solid #f1c40f !important;
-            color: white;
+            outline: 2px solid #fff;
         }
         .calendar-legend {
             display: flex;
@@ -293,9 +296,9 @@ if(sessionStorage.getItem("logueado") !== "si"){
 
     <div id="statusBar">⏳ CONECTANDO AL BROKER MQTT...</div>
 
-    <div class="calendar-legend">
+    <div class="container">
 
-            <div class="card">
+        <div class="card">
             <div class="card-content">
                 <h2>⚙️ Estado General</h2>
                 <div class="data-row">
@@ -512,49 +515,20 @@ if(sessionStorage.getItem("logueado") !== "si"){
             </div>
 
             <div class="calendar-legend">
-<div class="legend-item">
-        <div class="legend-dot" style="background:#2ecc71"></div>
-        🌱 Con riego
-    </div>
-
-    <div class="legend-item">
-        <div class="legend-dot" style="background:#252525;border:1px solid #555"></div>
-        📅 Sin riego
-    </div>
-
-    <div class="legend-item">
-        <div class="legend-dot" style="background:#3498db"></div>
-        🔵 Hoy
-    </div>
-
-    <div class="legend-item">
-        <div class="legend-dot" style="background:#f1c40f"></div>
-        ⭐ Seleccionado
-    </div>
-
-    <div style="margin-left:auto;">
-        <label style="font-weight:bold;font-size:0.85rem;">
-            Ver Zona:
-        </label>
-
-        <select id="cal_zona_selector"
-                onchange="renderizarCalendario()"
-                style="
-                background:#2b2b2b;
-                color:white;
-                border:1px solid #444;
-                padding:3px;
-                border-radius:4px;">
-
-            <option value="1">Zona 1</option>
-            <option value="2">Zona 2</option>
-            <option value="3">Zona 3</option>
-            <option value="4">Zona 4</option>
-
-        </select>
-    </div>
-
-</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--success)"></div> Con riego</div>
+                <div class="legend-item"><div class="legend-dot" style="background: #181818; border: 1px solid #333;"></div> Sin riego</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--primary)"></div> Hoy</div>
+                
+                <div style="margin-left: auto;">
+                    <label style="font-weight: bold; font-size: 0.85rem;">Ver Zona: </label>
+                    <select id="cal_zona_selector" onchange="renderizarCalendario()" style="background: #2b2b2b; color: white; border: 1px solid #444; padding: 3px; border-radius: 4px;">
+                        <option value="1">Zona 1</option>
+                        <option value="2">Zona 2</option>
+                        <option value="3">Zona 3</option>
+                        <option value="4">Zona 4</option>
+                    </select>
+                </div>
+            </div>
 
             <div class="calendar-grid" id="calendarGrid">
                 </div>
