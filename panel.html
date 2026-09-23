@@ -39,7 +39,7 @@ button:hover{opacity:.9}button.btn-danger{background:var(--danger)}button.btn-su
 .calendar-cell{background:#181818;border:1px solid #252525;border-radius:6px;padding:12px 5px;font-size:.95rem;cursor:pointer;position:relative;min-height:55px;display:flex;flex-direction:column;justify-content:space-between;align-items:center}
 .calendar-cell:hover{background:#222}.calendar-cell.other-month{color:#444;cursor:not-allowed}
 .calendar-cell.riego-si{background:rgba(46,204,113,.2);border-color:var(--success)}
-.calendar-cell.riego-si::after{content:"ð±";font-size:11px;margin-top:2px}
+.calendar-cell.riego-si::after{content:"&#127793;";font-size:11px;margin-top:2px}
 .calendar-cell.today{border:2px solid var(--primary)}.calendar-cell.selected{outline:2px solid var(--warning)}
 .calendar-legend{display:flex;gap:20px;font-size:.85rem;background:#181818;padding:10px;border-radius:6px;margin-bottom:15px;flex-wrap:wrap}
 .legend-item{display:flex;align-items:center;gap:6px}.legend-dot{width:12px;height:12px;border-radius:50%}
@@ -52,41 +52,41 @@ input,select{background:#2b2b2b;color:#fff;border:1px solid #444;border-radius:4
 
 <header>
 <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-<div><h1>SISTEMA DE RIEGO INTELIGENTE</h1><p style="color:var(--text-muted)">Monitoreo MQTT y TelemetrÃ­a en Tiempo Real</p></div>
-<button onclick="logout()" class="btn-danger">ðª Salir</button>
+<div><h1>SISTEMA DE RIEGO INTELIGENTE</h1><p style="color:var(--text-muted)">Monitoreo MQTT y Telemetr&#237;a en Tiempo Real</p></div>
+<button onclick="logout()" class="btn-danger">&#128682; Salir</button>
 </div>
 </header>
 
-<div id="statusBar">â³ CONECTANDO AL BROKER MQTT...</div>
+<div id="statusBar">&#9203; CONECTANDO AL BROKER MQTT...</div>
 
 <div class="container">
 
 <div class="card"><div class="card-content">
-<h2>âï¸ Estado General</h2>
+<h2>&#9881;&#65039; Estado General</h2>
 <div class="data-row"><span class="data-label">Hora del RTC:</span><span class="data-value" id="hora">--/-- --:--:--</span></div>
-<div class="data-row"><span class="data-label">Modo AutomÃ¡tico:</span><span class="data-value" id="auto">ð´ DESHABILITADO</span></div>
-<div class="data-row"><span class="data-label">Sensor de Lluvia:</span><span class="data-value" id="lluvia">âï¸ SECO</span></div>
-<div class="data-row"><span class="data-label">Bomba HidrÃ¡ulica:</span><span class="data-value" id="motor">ð´ PARADO</span></div>
+<div class="data-row"><span class="data-label">Modo Autom&#225;tico:</span><span class="data-value" id="auto">&#128308; DESHABILITADO</span></div>
+<div class="data-row"><span class="data-label">Sensor de Lluvia:</span><span class="data-value" id="lluvia">&#9728;&#65039; SECO</span></div>
+<div class="data-row"><span class="data-label">Bomba Hidr&#225;ulica:</span><span class="data-value" id="motor">&#128308; PARADO</span></div>
 </div></div>
 
 <div class="card"><div class="card-content">
-<h2>ð¦ Clima</h2>
-<div class="data-row"><span class="data-label">ð¡ Temperatura:</span><span class="data-value" id="temp">-- Â°C</span></div>
-<div class="data-row"><span class="data-label">ð§ Prob. lluvia:</span><span class="data-value" id="rainChance">-- %</span></div>
-<div class="data-row"><span class="data-label">ð Estado:</span><span class="data-value" id="rainStatus">Consultando...</span></div>
-<div class="data-row"><span class="data-label">ð Actualizado:</span><span class="data-value" id="climaHora">--:--</span></div>
+<h2>&#127782; Clima</h2>
+<div class="data-row"><span class="data-label">&#127777; Temperatura:</span><span class="data-value" id="temp">-- &#176;C</span></div>
+<div class="data-row"><span class="data-label">&#127783; Prob. lluvia:</span><span class="data-value" id="rainChance">-- %</span></div>
+<div class="data-row"><span class="data-label">&#128205; Estado:</span><span class="data-value" id="rainStatus">Consultando...</span></div>
+<div class="data-row"><span class="data-label">&#128338; Actualizado:</span><span class="data-value" id="climaHora">--:--</span></div>
 </div></div>
 
 <div class="card"><div class="card-content">
-<h2>ð± VÃ¡lvulas de Riego</h2>
-<div class="data-row"><span class="data-label" id="nombre1p">Zona 1</span><span class="data-value" id="z1">ð´ APAGADA</span></div>
-<div class="data-row"><span class="data-label" id="nombre2p">Zona 2</span><span class="data-value" id="z2">ð´ APAGADA</span></div>
-<div class="data-row"><span class="data-label" id="nombre3p">Zona 3</span><span class="data-value" id="z3">ð´ APAGADA</span></div>
-<div class="data-row"><span class="data-label" id="nombre4p">Zona 4</span><span class="data-value" id="z4">ð´ APAGADA</span></div>
+<h2>&#127793; V&#225;lvulas de Riego</h2>
+<div class="data-row"><span class="data-label" id="nombre1p">Zona 1</span><span class="data-value" id="z1">&#128308; APAGADA</span></div>
+<div class="data-row"><span class="data-label" id="nombre2p">Zona 2</span><span class="data-value" id="z2">&#128308; APAGADA</span></div>
+<div class="data-row"><span class="data-label" id="nombre3p">Zona 3</span><span class="data-value" id="z3">&#128308; APAGADA</span></div>
+<div class="data-row"><span class="data-label" id="nombre4p">Zona 4</span><span class="data-value" id="z4">&#128308; APAGADA</span></div>
 </div></div>
 
 <div class="card"><div class="card-content">
-<h2>ð Tiempos Programados</h2>
+<h2>&#128197; Tiempos Programados</h2>
 <div class="data-row"><span class="data-label" id="nombre1">Zona 1:</span><span class="data-value" id="prog1">Cargando...</span></div>
 <div class="data-row"><span class="data-label" id="nombre2">Zona 2:</span><span class="data-value" id="prog2">Cargando...</span></div>
 <div class="data-row"><span class="data-label" id="nombre3">Zona 3:</span><span class="data-value" id="prog3">Cargando...</span></div>
@@ -94,25 +94,25 @@ input,select{background:#2b2b2b;color:#fff;border:1px solid #444;border-radius:4
 </div></div>
 
 <div class="card"><div class="card-content">
-<h2>ð® Comando Remoto Manual</h2>
+<h2>&#127918; Comando Remoto Manual</h2>
 <div class="btn-grid">
 <button onclick="enviar('Z1_TOGGLE')">Alternar Z1</button><button onclick="enviar('Z2_TOGGLE')">Alternar Z2</button>
 <button onclick="enviar('Z3_TOGGLE')">Alternar Z3</button><button onclick="enviar('Z4_TOGGLE')">Alternar Z4</button>
-<button class="btn-success" onclick="enviar('AUTO_ON')">ð¤ AUTO ON</button><button class="btn-danger" onclick="enviar('AUTO_OFF')">ð¤ AUTO OFF</button>
-<button class="btn-danger" style="grid-column:1/-1" onclick="enviar('STOP_ALL')">ð APAGAR TODO</button>
+<button class="btn-success" onclick="enviar('AUTO_ON')">&#129302; AUTO ON</button><button class="btn-danger" onclick="enviar('AUTO_OFF')">&#129302; AUTO OFF</button>
+<button class="btn-danger" style="grid-column:1/-1" onclick="enviar('STOP_ALL')">&#128721; APAGAR TODO</button>
 </div></div></div>
 
-<div class="card"><div class="card-content"><h2>ð Historial de Eventos</h2><div id="historial" style="min-height:140px;max-height:140px;overflow-y:auto;font-size:14px;margin-bottom:10px"></div></div>
-<button class="btn-danger" style="width:100%" onclick="borrarHistorial()">ðï¸ Borrar Historial</button></div>
+<div class="card"><div class="card-content"><h2>&#128203; Historial de Eventos</h2><div id="historial" style="min-height:140px;max-height:140px;overflow-y:auto;font-size:14px;margin-bottom:10px"></div></div>
+<button class="btn-danger" style="width:100%" onclick="borrarHistorial()">&#128465;&#65039; Borrar Historial</button></div>
 
-<div class="card"><div class="card-content"><h2>ð·ï¸ Nombres de Zonas</h2>
+<div class="card"><div class="card-content"><h2>&#127991;&#65039; Nombres de Zonas</h2>
 <div><label>Zona 1:</label><input id="input_nz1" style="width:100%;margin:4px 0"></div>
 <div><label>Zona 2:</label><input id="input_nz2" style="width:100%;margin:4px 0"></div>
 <div><label>Zona 3:</label><input id="input_nz3" style="width:100%;margin:4px 0"></div>
 <div><label>Zona 4:</label><input id="input_nz4" style="width:100%;margin:4px 0"></div>
-</div><button class="btn-success" style="width:100%" onclick="guardarNombresZonas()">ð¾ Guardar Nombres</button></div>
+</div><button class="btn-success" style="width:100%" onclick="guardarNombresZonas()">&#128190; Guardar Nombres</button></div>
 
-<div class="card"><div class="card-content"><h2>ð§ Consumo Estimado</h2>
+<div class="card"><div class="card-content"><h2>&#128167; Consumo Estimado</h2>
 <div class="data-row"><span>Zona 1</span><span id="consumo1">0.0 L</span></div>
 <div class="data-row"><span>Zona 2</span><span id="consumo2">0.0 L</span></div>
 <div class="data-row"><span>Zona 3</span><span id="consumo3">0.0 L</span></div>
@@ -120,31 +120,31 @@ input,select{background:#2b2b2b;color:#fff;border:1px solid #444;border-radius:4
 <hr style="margin:8px 0;border:0;border-top:1px solid #444"><div class="data-row"><strong>TOTAL</strong><strong id="consumoTotal">0.0 L</strong></div>
 </div></div>
 
-<div class="card"><div class="card-content"><h2>âï¸ Caudal por Zona</h2>
+<div class="card"><div class="card-content"><h2>&#9881;&#65039; Caudal por Zona</h2>
 <div class="data-row"><span>Zona 1</span><input id="caudal1" type="number" value="8" style="width:80px"></div>
 <div class="data-row"><span>Zona 2</span><input id="caudal2" type="number" value="8" style="width:80px"></div>
 <div class="data-row"><span>Zona 3</span><input id="caudal3" type="number" value="8" style="width:80px"></div>
 <div class="data-row"><span>Zona 4</span><input id="caudal4" type="number" value="8" style="width:80px"></div>
-</div><button class="btn-success" style="width:100%" onclick="guardarCaudales()">ð¾ Guardar Caudales</button></div>
+</div><button class="btn-success" style="width:100%" onclick="guardarCaudales()">&#128190; Guardar Caudales</button></div>
 
-<div class="card"><div class="card-content"><h2>ð ConfiguraciÃ³n de Red</h2>
+<div class="card"><div class="card-content"><h2>&#127760; Configuraci&#243;n de Red</h2>
 <label>Nombre de Red (SSID):</label><input id="input_ssid" style="width:100%;margin:4px 0 12px">
-<label>ContraseÃ±a WiFi:</label><input type="password" id="input_wfifipass" placeholder="â¢â¢â¢â¢â¢â¢â¢â¢" style="width:100%;margin:4px 0 15px">
-</div><button class="btn-danger" style="width:100%" onclick="guardarRedWiFi()">ð¡ Guardar y Reiniciar ESP32</button></div>
+<label>Contrase&#241;a WiFi:</label><input type="password" id="input_wfifipass" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" style="width:100%;margin:4px 0 15px">
+</div><button class="btn-danger" style="width:100%" onclick="guardarRedWiFi()">&#128225; Guardar y Reiniciar ESP32</button></div>
 
 <div class="card full-width">
 <div class="calendar-header">
-<div><h2>ð Calendario de Riego</h2><p style="color:var(--text-muted);font-size:.85rem">DÃ­as programados para riego automÃ¡tico â se actualiza al recibir datos del ESP32</p></div>
+<div><h2>&#128197; Calendario de Riego</h2><p style="color:var(--text-muted);font-size:.85rem">D&#237;as programados para riego autom&#225;tico &#8212; se actualiza al recibir datos del ESP32</p></div>
 <div style="display:flex;align-items:center;gap:15px">
 <h3 id="calendarMonthYear" style="color:var(--success);font-size:1.2rem">---</h3>
 <div class="calendar-nav"><button onclick="cambiarMes(-1)">&lt;</button><button onclick="cambiarMes(1)">&gt;</button></div>
 </div></div>
 
 <div class="calendar-legend">
-<div class="legend-item"><div class="legend-dot" style="background:#2ecc71"></div>ð± Con riego</div>
-<div class="legend-item"><div class="legend-dot" style="background:#252525;border:1px solid #555"></div>ð Sin riego</div>
-<div class="legend-item"><div class="legend-dot" style="background:#3498db"></div>ðµ Hoy</div>
-<div class="legend-item"><div class="legend-dot" style="background:#f1c40f"></div>â­ Seleccionado</div>
+<div class="legend-item"><div class="legend-dot" style="background:#2ecc71"></div>&#127793; Con riego</div>
+<div class="legend-item"><div class="legend-dot" style="background:#252525;border:1px solid #555"></div>&#128197; Sin riego</div>
+<div class="legend-item"><div class="legend-dot" style="background:#3498db"></div>&#128309; Hoy</div>
+<div class="legend-item"><div class="legend-dot" style="background:#f1c40f"></div>&#11088; Seleccionado</div>
 <div style="margin-left:auto"><label style="font-weight:bold;font-size:.85rem">Ver Zona:</label>
 <select id="cal_zona_selector" onchange="renderizarCalendario()">
 <option value="1">Zona 1</option><option value="2">Zona 2</option><option value="3">Zona 3</option><option value="4">Zona 4</option>
@@ -153,20 +153,20 @@ input,select{background:#2b2b2b;color:#fff;border:1px solid #444;border-radius:4
 <div class="calendar-grid" id="calendarGrid"></div>
 
 <div class="calendar-details">
-<div><h4 style="color:var(--success);margin-bottom:8px">Detalle del dÃ­a seleccionado</h4>
-<p id="det_fecha" style="font-weight:bold;font-size:1.1rem;margin-bottom:5px">Selecciona un dÃ­a</p>
+<div><h4 style="color:var(--success);margin-bottom:8px">Detalle del d&#237;a seleccionado</h4>
+<p id="det_fecha" style="font-weight:bold;font-size:1.1rem;margin-bottom:5px">Selecciona un d&#237;a</p>
 <p id="det_estado" style="color:var(--text-muted)">---</p></div>
 <div><h4 style="color:var(--success);margin-bottom:8px">Configurar turnos para la zona activa</h4>
 <div style="display:flex;flex-wrap:wrap;gap:10px">
 <div style="background:#252525;padding:6px 10px;border-radius:6px;border:1px solid #333;flex:1;min-width:140px">
-<label style="font-weight:bold;color:var(--primary);font-size:.75rem">â±ï¸ TURNO 1:</label>
+<label style="font-weight:bold;color:var(--primary);font-size:.75rem">&#9201;&#65039; TURNO 1:</label>
 <div style="display:flex;gap:3px;margin-top:3px">
 <input type="number" id="p_h1" min="0" max="23" placeholder="H" style="width:33%;text-align:center">
 <input type="number" id="p_m1" min="0" max="59" placeholder="M" style="width:33%;text-align:center">
 <input type="number" id="p_d1" min="0" max="120" placeholder="Min" style="width:34%">
 </div></div>
 <div style="background:#252525;padding:6px 10px;border-radius:6px;border:1px solid #333;flex:1;min-width:140px">
-<label style="font-weight:bold;color:var(--primary);font-size:.75rem">â±ï¸ TURNO 2:</label>
+<label style="font-weight:bold;color:var(--primary);font-size:.75rem">&#9201;&#65039; TURNO 2:</label>
 <div style="display:flex;gap:3px;margin-top:3px">
 <input type="number" id="p_h2" min="0" max="23" placeholder="H" style="width:33%;text-align:center">
 <input type="number" id="p_m2" min="0" max="59" placeholder="M" style="width:33%;text-align:center">
@@ -174,17 +174,17 @@ input,select{background:#2b2b2b;color:#fff;border:1px solid #444;border-radius:4
 </div></div></div></div></div>
 
 <div style="display:flex;gap:15px;margin-bottom:15px;background:#252525;padding:10px;border-radius:6px;border:1px solid #333;align-items:center;flex-wrap:wrap">
-<label style="font-weight:bold;color:var(--warning);font-size:.9rem">ðï¸ DÃ­as globales de riego:</label>
+<label style="font-weight:bold;color:var(--warning);font-size:.9rem">&#128467;&#65039; D&#237;as globales de riego:</label>
 <div style="display:flex;flex-wrap:wrap;gap:12px" id="checkboxes_dias">
 <label><input type="checkbox" class="chk-dia" value="1"> Lun</label><label><input type="checkbox" class="chk-dia" value="2"> Mar</label>
-<label><input type="checkbox" class="chk-dia" value="3"> MiÃ©</label><label><input type="checkbox" class="chk-dia" value="4"> Jue</label>
-<label><input type="checkbox" class="chk-dia" value="5"> Vie</label><label><input type="checkbox" class="chk-dia" value="6"> SÃ¡b</label>
+<label><input type="checkbox" class="chk-dia" value="3"> Mi&#233;</label><label><input type="checkbox" class="chk-dia" value="4"> Jue</label>
+<label><input type="checkbox" class="chk-dia" value="5"> Vie</label><label><input type="checkbox" class="chk-dia" value="6"> S&#225;b</label>
 <label><input type="checkbox" class="chk-dia" value="7"> Dom</label>
 </div></div>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px">
-<button class="btn-danger" style="background:#2c2c2c" onclick="enviar('GET_STATUS')">ð Actualizar</button>
-<button class="btn-success" onclick="enviarProgramacionWeb()">ð¾ Guardar Cambios en ESP32</button>
+<button class="btn-danger" style="background:#2c2c2c" onclick="enviar('GET_STATUS')">&#128260; Actualizar</button>
+<button class="btn-success" onclick="enviarProgramacionWeb()">&#128190; Guardar Cambios en ESP32</button>
 </div>
 </div>
 </div>
@@ -199,7 +199,7 @@ const statusBar=document.getElementById("statusBar");
 let client=null;
 
 let fechaActualCalendario=new Date();
-let diasMascara=127; // Estado inicial visual: todos los dÃ­as; el ESP32 lo reemplaza al llegar por MQTT.
+let diasMascara=127; // Estado inicial visual: todos los d\u00EDas; el ESP32 lo reemplaza al llegar por MQTT.
 let turnosZonas={1:"",2:"",3:"",4:""};
 let programacionActual={1:{h1:0,m1:0,d1:0,h2:0,m2:0,d2:0},2:{h1:0,m1:0,d1:0,h2:0,m2:0,d2:0},3:{h1:0,m1:0,d1:0,h2:0,m2:0,d2:0},4:{h1:0,m1:0,d1:0,h2:0,m2:0,d2:0}};
 let historialEventos=JSON.parse(localStorage.getItem("historial"))||[];
@@ -210,7 +210,7 @@ let estadoAnterior={iniciado:false,z1:false,z2:false,z3:false,z4:false,motor:fal
 function setStatus(t,bg,color="white"){statusBar.innerText=t;statusBar.style.background=bg;statusBar.style.color=color}
 function iniciarMQTT(){
   if(typeof Paho==="undefined" || !Paho.MQTT){
-    setStatus("ð¡ CALENDARIO DISPONIBLE â MQTT NO CARGÃ","#f1c40f","#000");
+    setStatus("\u1F7E1 CALENDARIO DISPONIBLE \u2014 MQTT NO CARG\u00D3","#f1c40f","#000");
     return;
   }
   try{
@@ -230,25 +230,25 @@ function iniciarMQTT(){
     client.connect(opcionesConexion);
   }catch(e){
     console.error("Error iniciando MQTT:",e);
-    setStatus("ð¡ CALENDARIO DISPONIBLE â ERROR MQTT","#f1c40f","#000");
+    setStatus("\u1F7E1 CALENDARIO DISPONIBLE \u2014 ERROR MQTT","#f1c40f","#000");
   }
 }
 
 function alConectar(){
- setStatus("ð¢ CONECTADO ONLINE","#2ecc71","#000");
+ setStatus("\u1F7E2 CONECTADO ONLINE","#2ecc71","#000");
  client.subscribe("riego_pro/estado",{qos:1});
  enviar("GET_STATUS");
 }
-function alFallarConexion(e){setStatus("ð´ ERROR DE CONEXIÃN: "+e.errorMessage,"#e74c3c")}
+function alFallarConexion(e){setStatus("\u1F534 ERROR DE CONEXI\u00D3N: "+e.errorMessage,"#e74c3c")}
 function alPerderConexion(e){
- setStatus("ð´ DESCONECTADO (Reconectando...)","#e74c3c");
+ setStatus("\u1F534 DESCONECTADO (Reconectando...)","#e74c3c");
  setTimeout(()=>{ if(client && !client.isConnected()) iniciarMQTT(); },5000);
 }
 function enviar(mensaje){
- if(!client || !client.isConnected()){alert("No estÃ¡s conectado al broker MQTT.");return}
+ if(!client || !client.isConnected()){alert("No est\u00E1s conectado al broker MQTT.");return}
  const msg=new Paho.MQTT.Message(mensaje);msg.destinationName="riego_pro/comando";msg.qos=1;client.send(msg);
- setStatus("â¡ ENVIADO: "+mensaje,"#3498db");
- setTimeout(()=>{if(client && client.isConnected())setStatus("ð¢ CONECTADO ONLINE","#2ecc71","#000")},2000);
+ setStatus("\u26A1 ENVIADO: "+mensaje,"#3498db");
+ setTimeout(()=>{if(client && client.isConnected())setStatus("\u1F7E2 CONECTADO ONLINE","#2ecc71","#000")},2000);
 }
 
 function mascaraTieneDia(mask,dia){return (mask & (1<<dia))!==0}
@@ -263,22 +263,22 @@ function leerMascaraDeCheckboxes(){
 }
 
 const nombresMeses=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-const nombresDias=["LUN","MAR","MIÃ","JUE","VIE","SÃB","DOM"];
+const nombresDias=["LUN","MAR","MI\u00C9","JUE","VIE","S\u00C1B","DOM"];
 
 function renderizarCalendario(){
  const grid=document.getElementById("calendarGrid"),my=document.getElementById("calendarMonthYear");
  grid.innerHTML="";
- const aÃ±o=fechaActualCalendario.getFullYear(),mes=fechaActualCalendario.getMonth();
- my.innerText=`${nombresMeses[mes]} ${aÃ±o}`;
+ const a\u00F1o=fechaActualCalendario.getFullYear(),mes=fechaActualCalendario.getMonth();
+ my.innerText=`${nombresMeses[mes]} ${a\u00F1o}`;
  nombresDias.forEach(d=>{const x=document.createElement("div");x.className="calendar-day-name";x.innerText=d;grid.appendChild(x)});
- let first=new Date(aÃ±o,mes,1).getDay()-1;if(first===-1)first=6;
- const total=new Date(aÃ±o,mes+1,0).getDate(),prev=new Date(aÃ±o,mes,0).getDate();
+ let first=new Date(a\u00F1o,mes,1).getDay()-1;if(first===-1)first=6;
+ const total=new Date(a\u00F1o,mes+1,0).getDate(),prev=new Date(a\u00F1o,mes,0).getDate();
  const zona=document.getElementById("cal_zona_selector").value;
  for(let i=first;i>0;i--){const x=document.createElement("div");x.className="calendar-cell other-month";x.innerText=prev-i+1;grid.appendChild(x)}
  const hoy=new Date();
  for(let dia=1;dia<=total;dia++){
    const x=document.createElement("div");x.className="calendar-cell";x.innerText=dia;
-   const fecha=new Date(aÃ±o,mes,dia);let dow=fecha.getDay();if(dow===0)dow=7;
+   const fecha=new Date(a\u00F1o,mes,dia);let dow=fecha.getDay();if(dow===0)dow=7;
    if(mascaraTieneDia(diasMascara,dow))x.classList.add("riego-si");
    if(fecha.toDateString()===hoy.toDateString())x.classList.add("today");
    x.onclick=()=>{document.querySelectorAll(".calendar-cell").forEach(c=>c.classList.remove("selected"));x.classList.add("selected");actualizarDetalleDia(fecha,mascaraTieneDia(diasMascara,dow))};
@@ -295,9 +295,9 @@ function actualizarDetalleDia(fecha,tiene){
  const op={weekday:"long",year:"numeric",month:"long",day:"numeric"};
  document.getElementById("det_fecha").innerText=fecha.toLocaleDateString("es-AR",op);
  const turnos=`Turno 1: ${fmtTurno(p.h1,p.m1,p.d1)}<br>Turno 2: ${fmtTurno(p.h2,p.m2,p.d2)}`;
- document.getElementById("det_estado").innerHTML=tiene?`ð± <span style="color:var(--success);font-weight:bold">Riego AutomÃ¡tico Activo</span><br><small style="color:#aaa">${turnos}</small>`:`â <span style="color:var(--danger);font-weight:bold">Sin riego programado</span>`;
+ document.getElementById("det_estado").innerHTML=tiene?`\u1F331 <span style="color:var(--success);font-weight:bold">Riego Autom\u00E1tico Activo</span><br><small style="color:#aaa">${turnos}</small>`:`\u274C <span style="color:var(--danger);font-weight:bold">Sin riego programado</span>`;
 }
-function fmtTurno(h,m,d){return d>0?`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")} â ${d} min`:"Sin programar"}
+function fmtTurno(h,m,d){return d>0?`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")} \u2192 ${d} min`:"Sin programar"}
 
 function cargarTurnoEnFormulario(z){
  const p=programacionActual[z];
@@ -313,35 +313,35 @@ function guardarNombresZonas(){
 }
 function guardarRedWiFi(){
  const ssid=document.getElementById("input_ssid").value.trim(),pass=document.getElementById("input_wfifipass").value.trim();
- if(!ssid||!pass){alert("Ingresa SSID y contraseÃ±a.");return}
- if(confirm("Â¿Reiniciar ESP32 para conectar a la nueva red?"))enviar("SET_WIFI,"+ssid+","+pass);
+ if(!ssid||!pass){alert("Ingresa SSID y contrase\u00F1a.");return}
+ if(confirm("\u00BFReiniciar ESP32 para conectar a la nueva red?"))enviar("SET_WIFI,"+ssid+","+pass);
 }
 function agregarEvento(t){const a=new Date(),f=a.toLocaleDateString("es-AR")+" "+a.toLocaleTimeString("es-AR");historialEventos.unshift(f+" - "+t);if(historialEventos.length>100)historialEventos.pop();localStorage.setItem("historial",JSON.stringify(historialEventos));mostrarHistorial()}
 function mostrarHistorial(){const d=document.getElementById("historial");if(d)d.innerHTML=historialEventos.map(e=>`<div style="margin-bottom:6px">${e}</div>`).join("")}
-function borrarHistorial(){if(confirm("Â¿Borrar historial completo?")){historialEventos=[];localStorage.removeItem("historial");mostrarHistorial()}}
+function borrarHistorial(){if(confirm("\u00BFBorrar historial completo?")){historialEventos=[];localStorage.removeItem("historial");mostrarHistorial()}}
 function guardarCaudales(){localStorage.setItem("caudales",JSON.stringify({z1:parseFloat(document.getElementById("caudal1").value)||0,z2:parseFloat(document.getElementById("caudal2").value)||0,z3:parseFloat(document.getElementById("caudal3").value)||0,z4:parseFloat(document.getElementById("caudal4").value)||0}));alert("Caudales guardados")}
 function obtenerCaudales(){return JSON.parse(localStorage.getItem("caudales"))||{z1:8,z2:8,z3:8,z4:8}}
 function actualizarConsumoUI(){document.getElementById("consumo1").innerText=consumo.z1.toFixed(1)+" L";document.getElementById("consumo2").innerText=consumo.z2.toFixed(1)+" L";document.getElementById("consumo3").innerText=consumo.z3.toFixed(1)+" L";document.getElementById("consumo4").innerText=consumo.z4.toFixed(1)+" L";document.getElementById("consumoTotal").innerText=(consumo.z1+consumo.z2+consumo.z3+consumo.z4).toFixed(1)+" L"}
 
 function alRecibirMensaje(message){
  if(message.destinationName!=="riego_pro/estado")return;
- let data;try{data=JSON.parse(message.payloadString)}catch(e){console.error("JSON MQTT invÃ¡lido",e);return}
+ let data;try{data=JSON.parse(message.payloadString)}catch(e){console.error("JSON MQTT inv\u00E1lido",e);return}
  if(estadoAnterior.iniciado){
   [["z1",1],["z2",2],["z3",3],["z4",4]].forEach(([k,n])=>{
     if(data[k]!==estadoAnterior[k]){agregarEvento(`Zona ${n} ${data[k]?"ENCENDIDA":"APAGADA"}`);if(data[k])inicioZona[k]=Date.now();else if(inicioZona[k]){consumo[k]+=((Date.now()-inicioZona[k])/60000)*obtenerCaudales()[k];localStorage.setItem("consumo",JSON.stringify(consumo));inicioZona[k]=null;actualizarConsumoUI()}}
   });
   if(data.motor!==estadoAnterior.motor)agregarEvento("Bomba "+(data.motor?"ENCENDIDA":"APAGADA"));
-  if(data.auto!==estadoAnterior.auto)agregarEvento("Modo AutomÃ¡tico "+(data.auto?"ACTIVADO":"DESACTIVADO"));
+  if(data.auto!==estadoAnterior.auto)agregarEvento("Modo Autom\u00E1tico "+(data.auto?"ACTIVADO":"DESACTIVADO"));
  }
  estadoAnterior={iniciado:true,z1:!!data.z1,z2:!!data.z2,z3:!!data.z3,z4:!!data.z4,motor:!!data.motor,auto:!!data.auto};
  document.getElementById("hora").innerText=data.hora||"--";
- document.getElementById("auto").innerText=data.auto?"ð¢ HABILITADO":"ð´ DESHABILITADO";
- document.getElementById("motor").innerText=data.motor?"ð¢ ENCENDIDA":"ð´ PARADO";
- document.getElementById("lluvia").innerText=data.lluvia?"ð§ï¸ LLUVIA":"âï¸ SECO";
- document.getElementById("temp").innerText=Number(data.temp||0).toFixed(1)+" Â°C";
+ document.getElementById("auto").innerText=data.auto?"\u1F7E2 HABILITADO":"\u1F534 DESHABILITADO";
+ document.getElementById("motor").innerText=data.motor?"\u1F7E2 ENCENDIDA":"\u1F534 PARADO";
+ document.getElementById("lluvia").innerText=data.lluvia?"\u1F327\uFE0F LLUVIA":"\u2600\uFE0F SECO";
+ document.getElementById("temp").innerText=Number(data.temp||0).toFixed(1)+" \u00B0C";
  document.getElementById("rainChance").innerText=Number(data.rainChance||0)+" %";
- document.getElementById("rainStatus").innerText=data.rainBlock?"ð§ï¸ Riego suspendido":"â Riego habilitado";
- document.getElementById("z1").innerText=data.z1?"ð¢ ENCENDIDA":"ð´ APAGADA";document.getElementById("z2").innerText=data.z2?"ð¢ ENCENDIDA":"ð´ APAGADA";document.getElementById("z3").innerText=data.z3?"ð¢ ENCENDIDA":"ð´ APAGADA";document.getElementById("z4").innerText=data.z4?"ð¢ ENCENDIDA":"ð´ APAGADA";
+ document.getElementById("rainStatus").innerText=data.rainBlock?"\u1F327\uFE0F Riego suspendido":"\u2705 Riego habilitado";
+ document.getElementById("z1").innerText=data.z1?"\u1F7E2 ENCENDIDA":"\u1F534 APAGADA";document.getElementById("z2").innerText=data.z2?"\u1F7E2 ENCENDIDA":"\u1F534 APAGADA";document.getElementById("z3").innerText=data.z3?"\u1F7E2 ENCENDIDA":"\u1F534 APAGADA";document.getElementById("z4").innerText=data.z4?"\u1F7E2 ENCENDIDA":"\u1F534 APAGADA";
  document.getElementById("prog1").innerText=data.prog1||"Sin programar";
  document.getElementById("prog2").innerText=data.prog2||"Sin programar";
  document.getElementById("prog3").innerText=data.prog3||"Sin programar";
@@ -350,7 +350,7 @@ function alRecibirMensaje(message){
  diasMascara=Number(data.dias_mask??data.dias_z1??0);
  aplicarMascaraACheckboxes(diasMascara);
 
- // El ESP32 publica los horarios numÃ©ricos para que el formulario y el detalle sean exactos.
+ // El ESP32 publica los horarios num\u00E9ricos para que el formulario y el detalle sean exactos.
  [1,2,3,4].forEach(z=>{
    programacionActual[z]={
      h1:Number(data["z"+z+"_h1"]??0),m1:Number(data["z"+z+"_m1"]??0),d1:Number(data["z"+z+"_d1"]??0),
@@ -370,16 +370,16 @@ function enviarProgramacionWeb(){
  const m2=Math.max(0,Math.min(59,Number(document.getElementById("p_m2").value)||0));
  const d2=Math.max(0,Math.min(120,Number(document.getElementById("p_d2").value)||0));
  const mask=leerMascaraDeCheckboxes();
- if(mask===0){alert("Por favor, selecciona al menos un dÃ­a de la semana para el riego.");return}
+ if(mask===0){alert("Por favor, selecciona al menos un d\u00EDa de la semana para el riego.");return}
  enviar(`SET_PROG,${zona},${h1},${m1},${d1},${h2},${m2},${d2},${mask}`);
 }
-// InicializaciÃ³n independiente del calendario.
+// Inicializaci\u00F3n independiente del calendario.
 mostrarHistorial();
 actualizarConsumoUI();
 cargarTurnoEnFormulario(document.getElementById("cal_zona_selector").value);
 renderizarCalendario();
 
-// MQTT se inicia despuÃ©s de pintar la interfaz.
+// MQTT se inicia despu\u00E9s de pintar la interfaz.
 iniciarMQTT();
 
 function logout(){sessionStorage.removeItem("logueado");window.location.href="index.html"}
