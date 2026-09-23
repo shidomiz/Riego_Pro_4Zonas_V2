@@ -8,7 +8,7 @@ if(sessionStorage.getItem("logueado") !== "si"){
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel de Control - Riego Inteligente 4 Zonas V5.6</title>
+<title>Panel de Control - Riego Inteligente 4 Zonas V5.8</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script><style>
 :root{
  --bg-color:#121212;--card-bg:#1e1e1e;--text-color:#fff;--text-muted:#aaa;
@@ -59,10 +59,11 @@ input,select{background:#2b2b2b;color:#fff;border:1px solid #444;border-radius:4
 <div class="data-row"><span class="data-label">Bomba Hidr&#225;ulica:</span><span class="data-value" id="motor"> PARADO</span></div>
 </div></div><div class="card"><div class="card-content">
 <h2>Clima</h2>
-<div class="data-row"><span class="data-label">Temperatura actual:</span><span class="data-value" id="temp">-- &#176;C</span></div>
-<div class="data-row"><span class="data-label">Probabilidad de lluvia:</span><span class="data-value" id="rainChance">-- %</span></div>
+<div class="data-row"><span class="data-label">Temperatura actual:</span><span class="data-value" id="temp">Consultando...</span></div>
+<div class="data-row"><span class="data-label">Probabilidad de lluvia:</span><span class="data-value" id="rainChance">Consultando...</span></div>
 <div class="data-row"><span class="data-label">Estado del clima:</span><span class="data-value" id="rainStatus">Consultando...</span></div>
 <div class="data-row"><span class="data-label">Ultima actualizacion:</span><span class="data-value" id="climaHora">--:--:--</span></div>
+<div class="data-row"><span class="data-label">Fuente:</span><span class="data-value" id="climaFuente">Esperando datos...</span></div>
 </div></div><div class="card"><div class="card-content">
 <h2>Valvulas de Riego</h2>
 <div class="data-row"><span class="data-label" id="nombre1p">Zona 1</span><span class="data-value" id="z1"> APAGADA</span></div>
@@ -78,8 +79,8 @@ input,select{background:#2b2b2b;color:#fff;border:1px solid #444;border-radius:4
 </div></div><div class="card"><div class="card-content">
 <h2>Comando Remoto Manual</h2>
 <div class="btn-grid">
-<button onclick="enviar('Z1_TOGGLE')">Encender Z1</button><button onclick="enviar('Z2_TOGGLE')">Encender Z2</button>
-<button onclick="enviar('Z3_TOGGLE')">Encender Z3</button><button onclick="enviar('Z4_TOGGLE')">Encender Z4</button>
+<button id="btnZ1" class="btn-success" onclick="enviar('Z1_TOGGLE')">Encender Zona 1</button><button id="btnZ2" class="btn-success" onclick="enviar('Z2_TOGGLE')">Encender Zona 2</button>
+<button id="btnZ3" class="btn-success" onclick="enviar('Z3_TOGGLE')">Encender Zona 3</button><button id="btnZ4" class="btn-success" onclick="enviar('Z4_TOGGLE')">Encender Zona 4</button>
 <button class="btn-success" onclick="enviar('AUTO_ON')"> AUTO ON</button><button class="btn-danger" onclick="enviar('AUTO_OFF')"> AUTO OFF</button>
 <button class="btn-danger" style="grid-column:1/-1" onclick="enviar('STOP_ALL')"> APAGAR TODO</button>
 </div></div></div><div class="card"><div class="card-content"><h2>Historial de Eventos</h2><div id="historial" style="min-height:140px;max-height:140px;overflow-y:auto;font-size:14px;margin-bottom:10px"></div></div>
@@ -209,6 +210,39 @@ function enviar(mensaje){
  setTimeout(()=>{if(client && client.isConnected())setStatus(" CONECTADO ONLINE","#2ecc71","#000")},2000);
 }
 
+function actualizarBotonesZonas(data){
+  [1,2,3,4].forEach(z=>{
+    const nombre=data["name_z"+z] || ("Zona " + z);
+    const activa=!!data["z"+z];
+    const btn=document.getElementById("btnZ"+z);
+    if(!btn) return;
+    btn.textContent=(activa ? "Apagar " : "Encender ") + nombre;
+    btn.classList.remove("btn-success","btn-danger");
+    btn.classList.add(activa ? "btn-danger" : "btn-success");
+  });
+}
+
+async function actualizarClimaWeb(){
+ try{
+   const url="https://api.open-meteo.com/v1/forecast?latitude=-35.0538&longitude=-58.7621&current=temperature_2m&hourly=precipitation_probability&timezone=auto";
+   const resp=await fetch(url,{cache:"no-store"});
+   if(!resp.ok) throw new Error("HTTP "+resp.status);
+   const d=await resp.json();
+   const temp=Number(d?.current?.temperature_2m);
+   const probs=Array.isArray(d?.hourly?.precipitation_probability)?d.hourly.precipitation_probability:[];
+   const rain=Number(probs[0] ?? 0);
+   if(Number.isFinite(temp)) document.getElementById("temp").innerText=temp.toFixed(1)+" °C";
+   if(Number.isFinite(rain)) document.getElementById("rainChance").innerText=Math.round(rain)+" %";
+   document.getElementById("rainStatus").innerText=rain>=60?"RIEGO SUSPENDIDO":"RIEGO HABILITADO";
+   document.getElementById("climaHora").innerText=new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+ document.getElementById("climaFuente").innerText="ESP32 + MQTT";
+   document.getElementById("climaFuente").innerText="Open-Meteo";
+ }catch(e){
+   console.warn("No se pudo actualizar el clima desde la web:",e);
+   document.getElementById("climaFuente").innerText="Sin conexión al servicio meteorológico";
+ }
+}
+
 function mascaraTieneDia(mask,dia){return (mask & (1<<dia))!==0}
 function aplicarMascaraACheckboxes(mask){
  diasMascara=Number(mask)||0;
@@ -308,6 +342,7 @@ function alRecibirMensaje(message){
  document.getElementById("z2").innerText=data.z2?"ENCENDIDA":"APAGADA";
  document.getElementById("z3").innerText=data.z3?"ENCENDIDA":"APAGADA";
  document.getElementById("z4").innerText=data.z4?"ENCENDIDA":"APAGADA";
+ actualizarBotonesZonas(data);
  document.getElementById("prog1").innerText=data.prog1||"Sin programar";
  document.getElementById("prog2").innerText=data.prog2||"Sin programar";
  document.getElementById("prog3").innerText=data.prog3||"Sin programar";
@@ -342,11 +377,14 @@ function enviarProgramacionWeb(){
 // Inicializaci\u00F3n independiente del calendario.
 mostrarHistorial();
 actualizarConsumoUI();
+actualizarBotonesZonas({});
 cargarTurnoEnFormulario(document.getElementById("cal_zona_selector").value);
 renderizarCalendario();
 
 // MQTT se inicia despu\u00E9s de pintar la interfaz.
 iniciarMQTT();
+actualizarClimaWeb();
+setInterval(actualizarClimaWeb, 10*60*1000);
 
 function logout(){sessionStorage.removeItem("logueado");window.location.href="index.html"}
 </script>
