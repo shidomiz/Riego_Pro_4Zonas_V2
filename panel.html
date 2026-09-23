@@ -39,7 +39,7 @@ button:hover{opacity:.9}button.btn-danger{background:var(--danger)}button.btn-su
 .calendar-cell{background:#181818;border:1px solid #252525;border-radius:6px;padding:12px 5px;font-size:.95rem;cursor:pointer;position:relative;min-height:55px;display:flex;flex-direction:column;justify-content:space-between;align-items:center}
 .calendar-cell:hover{background:#222}.calendar-cell.other-month{color:#444;cursor:not-allowed}
 .calendar-cell.riego-si{background:rgba(46,204,113,.2);border-color:var(--success)}
-.calendar-cell.riego-si::after{content:"&#127793;";font-size:11px;margin-top:2px}
+.calendar-cell.riego-si::after{content:"";font-size:11px;margin-top:2px}
 .calendar-cell.today{border:2px solid var(--primary)}.calendar-cell.selected{outline:2px solid var(--warning)}
 .calendar-legend{display:flex;gap:20px;font-size:.85rem;background:#181818;padding:10px;border-radius:6px;margin-bottom:15px;flex-wrap:wrap}
 .legend-item{display:flex;align-items:center;gap:6px}.legend-dot{width:12px;height:12px;border-radius:50%}
@@ -199,7 +199,7 @@ const statusBar=document.getElementById("statusBar");
 let client=null;
 
 let fechaActualCalendario=new Date();
-let diasMascara=127; // Estado inicial visual: todos los d\u00EDas; el ESP32 lo reemplaza al llegar por MQTT.
+let diasMascara=0; // Estado inicial visual: todos los d\u00EDas; el ESP32 lo reemplaza al llegar por MQTT.
 let turnosZonas={1:"",2:"",3:"",4:""};
 let programacionActual={1:{h1:0,m1:0,d1:0,h2:0,m2:0,d2:0},2:{h1:0,m1:0,d1:0,h2:0,m2:0,d2:0},3:{h1:0,m1:0,d1:0,h2:0,m2:0,d2:0},4:{h1:0,m1:0,d1:0,h2:0,m2:0,d2:0}};
 let historialEventos=JSON.parse(localStorage.getItem("historial"))||[];
