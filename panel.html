@@ -222,25 +222,12 @@ function actualizarBotonesZonas(data){
   });
 }
 
-async function actualizarClimaWeb(){
- try{
-   const url="https://api.open-meteo.com/v1/forecast?latitude=-35.0538&longitude=-58.7621&current=temperature_2m&hourly=precipitation_probability&timezone=auto";
-   const resp=await fetch(url,{cache:"no-store"});
-   if(!resp.ok) throw new Error("HTTP "+resp.status);
-   const d=await resp.json();
-   const temp=Number(d?.current?.temperature_2m);
-   const probs=Array.isArray(d?.hourly?.precipitation_probability)?d.hourly.precipitation_probability:[];
-   const rain=Number(probs[0] ?? 0);
-   if(Number.isFinite(temp)) document.getElementById("temp").innerText=temp.toFixed(1)+" °C";
-   if(Number.isFinite(rain)) document.getElementById("rainChance").innerText=Math.round(rain)+" %";
-   document.getElementById("rainStatus").innerText=rain>=60?"RIEGO SUSPENDIDO":"RIEGO HABILITADO";
-   document.getElementById("climaHora").innerText=new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
- document.getElementById("climaFuente").innerText="ESP32 + MQTT";
-   document.getElementById("climaFuente").innerText="Open-Meteo";
- }catch(e){
-   console.warn("No se pudo actualizar el clima desde la web:",e);
-   document.getElementById("climaFuente").innerText="Sin conexión al servicio meteorológico";
- }
+function actualizarClimaWeb(){
+  // El clima llega desde el ESP32 por MQTT.
+  const fuente=document.getElementById("climaFuente");
+  if(fuente && (fuente.innerText==="Esperando datos..." || fuente.innerText==="")){
+    fuente.innerText="Esperando clima del ESP32...";
+  }
 }
 
 function mascaraTieneDia(mask,dia){return (mask & (1<<dia))!==0}
@@ -331,12 +318,14 @@ function alRecibirMensaje(message){
  document.getElementById("motor").innerText=data.motor?"ENCENDIDA":"PARADO";
  document.getElementById("lluvia").innerText=data.lluvia?"LLUVIA":"SECO";
 
- const tempValue=Number(data.temp);
- const rainValue=Number(data.rainChance);
- document.getElementById("temp").innerText=Number.isFinite(tempValue)?tempValue.toFixed(1)+" \u00B0C":"-- \u00B0C";
- document.getElementById("rainChance").innerText=Number.isFinite(rainValue)?Math.round(rainValue)+" %":"-- %";
+  const climaOK=data.weatherOk!==false;
+  const tempValue=Number(data.temp);
+  const rainValue=Number(data.rainChance);
+  document.getElementById("temp").innerText=climaOK && Number.isFinite(tempValue)?tempValue.toFixed(1)+" °C":"-- °C";
+  document.getElementById("rainChance").innerText=climaOK && Number.isFinite(rainValue)?Math.round(rainValue)+" %":"-- %";
  document.getElementById("rainStatus").innerText=data.rainBlock?"RIEGO SUSPENDIDO":"RIEGO HABILITADO";
  document.getElementById("climaHora").innerText=new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  document.getElementById("climaFuente").innerText=data.weatherOk===false?"Sin datos meteorológicos":"ESP32 + Open-Meteo";
 
  document.getElementById("z1").innerText=data.z1?"ENCENDIDA":"APAGADA";
  document.getElementById("z2").innerText=data.z2?"ENCENDIDA":"APAGADA";
@@ -384,7 +373,6 @@ renderizarCalendario();
 // MQTT se inicia despu\u00E9s de pintar la interfaz.
 iniciarMQTT();
 actualizarClimaWeb();
-setInterval(actualizarClimaWeb, 10*60*1000);
 
 function logout(){sessionStorage.removeItem("logueado");window.location.href="index.html"}
 </script>
