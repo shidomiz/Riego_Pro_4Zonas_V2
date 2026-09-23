@@ -8,10 +8,8 @@ if(sessionStorage.getItem("logueado") !== "si"){
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel de Control - Riego Inteligente 4 Zonas</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
-
-<style>
+<title>Panel de Control - Riego Inteligente 4 Zonas V5.6</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script><style>
 :root{
  --bg-color:#121212;--card-bg:#1e1e1e;--text-color:#fff;--text-muted:#aaa;
  --primary:#3498db;--success:#2ecc71;--danger:#e74c3c;--warning:#f1c40f;
@@ -48,148 +46,108 @@ button:hover{opacity:.9}button.btn-danger{background:var(--danger)}button.btn-su
 input,select{background:#2b2b2b;color:#fff;border:1px solid #444;border-radius:4px;padding:6px}
 </style>
 </head>
-<body>
-
-<header>
+<body><header>
 <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
 <div><h1>SISTEMA DE RIEGO INTELIGENTE</h1><p style="color:var(--text-muted)">Monitoreo MQTT y Telemetr&#237;a en Tiempo Real</p></div>
-<button onclick="logout()" class="btn-danger">&#128682; Salir</button>
+<button onclick="logout()" class="btn-danger"> Salir</button>
 </div>
-</header>
-
-<div id="statusBar">&#9203; CONECTANDO AL BROKER MQTT...</div>
-
-<div class="container">
-
-<div class="card"><div class="card-content">
-<h2>&#9881;&#65039; Estado General</h2>
+</header><div id="statusBar"> CONECTANDO AL BROKER MQTT...</div><div class="container"><div class="card"><div class="card-content">
+<h2> Estado General</h2>
 <div class="data-row"><span class="data-label">Hora del RTC:</span><span class="data-value" id="hora">--/-- --:--:--</span></div>
-<div class="data-row"><span class="data-label">Modo Autom&#225;tico:</span><span class="data-value" id="auto">&#128308; DESHABILITADO</span></div>
-<div class="data-row"><span class="data-label">Sensor de Lluvia:</span><span class="data-value" id="lluvia">&#9728;&#65039; SECO</span></div>
-<div class="data-row"><span class="data-label">Bomba Hidr&#225;ulica:</span><span class="data-value" id="motor">&#128308; PARADO</span></div>
-</div></div>
-
-<div class="card"><div class="card-content">
-<h2>&#127782; Clima</h2>
-<div class="data-row"><span class="data-label">&#127777; Temperatura:</span><span class="data-value" id="temp">-- &#176;C</span></div>
-<div class="data-row"><span class="data-label">&#127783; Prob. lluvia:</span><span class="data-value" id="rainChance">-- %</span></div>
-<div class="data-row"><span class="data-label">&#128205; Estado:</span><span class="data-value" id="rainStatus">Consultando...</span></div>
-<div class="data-row"><span class="data-label">&#128338; Actualizado:</span><span class="data-value" id="climaHora">--:--</span></div>
-</div></div>
-
-<div class="card"><div class="card-content">
-<h2>&#127793; V&#225;lvulas de Riego</h2>
-<div class="data-row"><span class="data-label" id="nombre1p">Zona 1</span><span class="data-value" id="z1">&#128308; APAGADA</span></div>
-<div class="data-row"><span class="data-label" id="nombre2p">Zona 2</span><span class="data-value" id="z2">&#128308; APAGADA</span></div>
-<div class="data-row"><span class="data-label" id="nombre3p">Zona 3</span><span class="data-value" id="z3">&#128308; APAGADA</span></div>
-<div class="data-row"><span class="data-label" id="nombre4p">Zona 4</span><span class="data-value" id="z4">&#128308; APAGADA</span></div>
-</div></div>
-
-<div class="card"><div class="card-content">
-<h2>&#128197; Tiempos Programados</h2>
+<div class="data-row"><span class="data-label">Modo Autom&#225;tico:</span><span class="data-value" id="auto"> DESHABILITADO</span></div>
+<div class="data-row"><span class="data-label">Sensor de Lluvia:</span><span class="data-value" id="lluvia"> SECO</span></div>
+<div class="data-row"><span class="data-label">Bomba Hidr&#225;ulica:</span><span class="data-value" id="motor"> PARADO</span></div>
+</div></div><div class="card"><div class="card-content">
+<h2>Clima</h2>
+<div class="data-row"><span class="data-label">Temperatura actual:</span><span class="data-value" id="temp">-- &#176;C</span></div>
+<div class="data-row"><span class="data-label">Probabilidad de lluvia:</span><span class="data-value" id="rainChance">-- %</span></div>
+<div class="data-row"><span class="data-label">Estado del clima:</span><span class="data-value" id="rainStatus">Consultando...</span></div>
+<div class="data-row"><span class="data-label">Ultima actualizacion:</span><span class="data-value" id="climaHora">--:--:--</span></div>
+</div></div><div class="card"><div class="card-content">
+<h2>Valvulas de Riego</h2>
+<div class="data-row"><span class="data-label" id="nombre1p">Zona 1</span><span class="data-value" id="z1"> APAGADA</span></div>
+<div class="data-row"><span class="data-label" id="nombre2p">Zona 2</span><span class="data-value" id="z2"> APAGADA</span></div>
+<div class="data-row"><span class="data-label" id="nombre3p">Zona 3</span><span class="data-value" id="z3"> APAGADA</span></div>
+<div class="data-row"><span class="data-label" id="nombre4p">Zona 4</span><span class="data-value" id="z4"> APAGADA</span></div>
+</div></div><div class="card"><div class="card-content">
+<h2>Tiempos Programados</h2>
 <div class="data-row"><span class="data-label" id="nombre1">Zona 1:</span><span class="data-value" id="prog1">Cargando...</span></div>
 <div class="data-row"><span class="data-label" id="nombre2">Zona 2:</span><span class="data-value" id="prog2">Cargando...</span></div>
 <div class="data-row"><span class="data-label" id="nombre3">Zona 3:</span><span class="data-value" id="prog3">Cargando...</span></div>
 <div class="data-row"><span class="data-label" id="nombre4">Zona 4:</span><span class="data-value" id="prog4">Cargando...</span></div>
-</div></div>
-
-<div class="card"><div class="card-content">
-<h2>&#127918; Comando Remoto Manual</h2>
+</div></div><div class="card"><div class="card-content">
+<h2>Comando Remoto Manual</h2>
 <div class="btn-grid">
-<button onclick="enviar('Z1_TOGGLE')">Alternar Z1</button><button onclick="enviar('Z2_TOGGLE')">Alternar Z2</button>
-<button onclick="enviar('Z3_TOGGLE')">Alternar Z3</button><button onclick="enviar('Z4_TOGGLE')">Alternar Z4</button>
-<button class="btn-success" onclick="enviar('AUTO_ON')">&#129302; AUTO ON</button><button class="btn-danger" onclick="enviar('AUTO_OFF')">&#129302; AUTO OFF</button>
-<button class="btn-danger" style="grid-column:1/-1" onclick="enviar('STOP_ALL')">&#128721; APAGAR TODO</button>
-</div></div></div>
-
-<div class="card"><div class="card-content"><h2>&#128203; Historial de Eventos</h2><div id="historial" style="min-height:140px;max-height:140px;overflow-y:auto;font-size:14px;margin-bottom:10px"></div></div>
-<button class="btn-danger" style="width:100%" onclick="borrarHistorial()">&#128465;&#65039; Borrar Historial</button></div>
-
-<div class="card"><div class="card-content"><h2>&#127991;&#65039; Nombres de Zonas</h2>
+<button onclick="enviar('Z1_TOGGLE')">Encender Z1</button><button onclick="enviar('Z2_TOGGLE')">Encender Z2</button>
+<button onclick="enviar('Z3_TOGGLE')">Encender Z3</button><button onclick="enviar('Z4_TOGGLE')">Encender Z4</button>
+<button class="btn-success" onclick="enviar('AUTO_ON')"> AUTO ON</button><button class="btn-danger" onclick="enviar('AUTO_OFF')"> AUTO OFF</button>
+<button class="btn-danger" style="grid-column:1/-1" onclick="enviar('STOP_ALL')"> APAGAR TODO</button>
+</div></div></div><div class="card"><div class="card-content"><h2>Historial de Eventos</h2><div id="historial" style="min-height:140px;max-height:140px;overflow-y:auto;font-size:14px;margin-bottom:10px"></div></div>
+<button class="btn-danger" style="width:100%" onclick="borrarHistorial()"> Borrar Historial</button></div><div class="card"><div class="card-content"><h2>Nombres de Zonas</h2>
 <div><label>Zona 1:</label><input id="input_nz1" style="width:100%;margin:4px 0"></div>
 <div><label>Zona 2:</label><input id="input_nz2" style="width:100%;margin:4px 0"></div>
 <div><label>Zona 3:</label><input id="input_nz3" style="width:100%;margin:4px 0"></div>
 <div><label>Zona 4:</label><input id="input_nz4" style="width:100%;margin:4px 0"></div>
-</div><button class="btn-success" style="width:100%" onclick="guardarNombresZonas()">&#128190; Guardar Nombres</button></div>
-
-<div class="card"><div class="card-content"><h2>&#128167; Consumo Estimado</h2>
+</div><button class="btn-success" style="width:100%" onclick="guardarNombresZonas()"> Guardar Nombres</button></div><div class="card"><div class="card-content"><h2>Consumo Estimado</h2>
 <div class="data-row"><span>Zona 1</span><span id="consumo1">0.0 L</span></div>
 <div class="data-row"><span>Zona 2</span><span id="consumo2">0.0 L</span></div>
 <div class="data-row"><span>Zona 3</span><span id="consumo3">0.0 L</span></div>
 <div class="data-row"><span>Zona 4</span><span id="consumo4">0.0 L</span></div>
 <hr style="margin:8px 0;border:0;border-top:1px solid #444"><div class="data-row"><strong>TOTAL</strong><strong id="consumoTotal">0.0 L</strong></div>
-</div></div>
-
-<div class="card"><div class="card-content"><h2>&#9881;&#65039; Caudal por Zona</h2>
+</div></div><div class="card"><div class="card-content"><h2>Caudal por Zona</h2>
 <div class="data-row"><span>Zona 1</span><input id="caudal1" type="number" value="8" style="width:80px"></div>
 <div class="data-row"><span>Zona 2</span><input id="caudal2" type="number" value="8" style="width:80px"></div>
 <div class="data-row"><span>Zona 3</span><input id="caudal3" type="number" value="8" style="width:80px"></div>
 <div class="data-row"><span>Zona 4</span><input id="caudal4" type="number" value="8" style="width:80px"></div>
-</div><button class="btn-success" style="width:100%" onclick="guardarCaudales()">&#128190; Guardar Caudales</button></div>
-
-<div class="card"><div class="card-content"><h2>&#127760; Configuraci&#243;n de Red</h2>
+</div><button class="btn-success" style="width:100%" onclick="guardarCaudales()"> Guardar Caudales</button></div><div class="card"><div class="card-content"><h2>Configuracion de Red</h2>
 <label>Nombre de Red (SSID):</label><input id="input_ssid" style="width:100%;margin:4px 0 12px">
 <label>Contrase&#241;a WiFi:</label><input type="password" id="input_wfifipass" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" style="width:100%;margin:4px 0 15px">
-</div><button class="btn-danger" style="width:100%" onclick="guardarRedWiFi()">&#128225; Guardar y Reiniciar ESP32</button></div>
-
-<div class="card full-width">
+</div><button class="btn-danger" style="width:100%" onclick="guardarRedWiFi()"> Guardar y Reiniciar ESP32</button></div><div class="card full-width">
 <div class="calendar-header">
-<div><h2>&#128197; Calendario de Riego</h2><p style="color:var(--text-muted);font-size:.85rem">D&#237;as programados para riego autom&#225;tico &#8212; se actualiza al recibir datos del ESP32</p></div>
+<div><h2> Calendario de Riego</h2><p style="color:var(--text-muted);font-size:.85rem">D&#237;as programados para riego autom&#225;tico &#8212; se actualiza al recibir datos del ESP32</p></div>
 <div style="display:flex;align-items:center;gap:15px">
 <h3 id="calendarMonthYear" style="color:var(--success);font-size:1.2rem">---</h3>
 <div class="calendar-nav"><button onclick="cambiarMes(-1)">&lt;</button><button onclick="cambiarMes(1)">&gt;</button></div>
-</div></div>
-
-<div class="calendar-legend">
-<div class="legend-item"><div class="legend-dot" style="background:#2ecc71"></div>&#127793; Con riego</div>
-<div class="legend-item"><div class="legend-dot" style="background:#252525;border:1px solid #555"></div>&#128197; Sin riego</div>
-<div class="legend-item"><div class="legend-dot" style="background:#3498db"></div>&#128309; Hoy</div>
-<div class="legend-item"><div class="legend-dot" style="background:#f1c40f"></div>&#11088; Seleccionado</div>
+</div></div><div class="calendar-legend">
+<div class="legend-item"><div class="legend-dot" style="background:#2ecc71"></div> Con riego</div>
+<div class="legend-item"><div class="legend-dot" style="background:#252525;border:1px solid #555"></div> Sin riego</div>
+<div class="legend-item"><div class="legend-dot" style="background:#3498db"></div> Hoy</div>
+<div class="legend-item"><div class="legend-dot" style="background:#f1c40f"></div> Seleccionado</div>
 <div style="margin-left:auto"><label style="font-weight:bold;font-size:.85rem">Ver Zona:</label>
 <select id="cal_zona_selector" onchange="renderizarCalendario()">
 <option value="1">Zona 1</option><option value="2">Zona 2</option><option value="3">Zona 3</option><option value="4">Zona 4</option>
-</select></div></div>
-
-<div class="calendar-grid" id="calendarGrid"></div>
-
-<div class="calendar-details">
+</select></div></div><div class="calendar-grid" id="calendarGrid"></div><div class="calendar-details">
 <div><h4 style="color:var(--success);margin-bottom:8px">Detalle del d&#237;a seleccionado</h4>
 <p id="det_fecha" style="font-weight:bold;font-size:1.1rem;margin-bottom:5px">Selecciona un d&#237;a</p>
 <p id="det_estado" style="color:var(--text-muted)">---</p></div>
 <div><h4 style="color:var(--success);margin-bottom:8px">Configurar turnos para la zona activa</h4>
 <div style="display:flex;flex-wrap:wrap;gap:10px">
 <div style="background:#252525;padding:6px 10px;border-radius:6px;border:1px solid #333;flex:1;min-width:140px">
-<label style="font-weight:bold;color:var(--primary);font-size:.75rem">&#9201;&#65039; TURNO 1:</label>
+<label style="font-weight:bold;color:var(--primary);font-size:.75rem"> TURNO 1:</label>
 <div style="display:flex;gap:3px;margin-top:3px">
 <input type="number" id="p_h1" min="0" max="23" placeholder="H" style="width:33%;text-align:center">
 <input type="number" id="p_m1" min="0" max="59" placeholder="M" style="width:33%;text-align:center">
 <input type="number" id="p_d1" min="0" max="120" placeholder="Min" style="width:34%">
 </div></div>
 <div style="background:#252525;padding:6px 10px;border-radius:6px;border:1px solid #333;flex:1;min-width:140px">
-<label style="font-weight:bold;color:var(--primary);font-size:.75rem">&#9201;&#65039; TURNO 2:</label>
+<label style="font-weight:bold;color:var(--primary);font-size:.75rem"> TURNO 2:</label>
 <div style="display:flex;gap:3px;margin-top:3px">
 <input type="number" id="p_h2" min="0" max="23" placeholder="H" style="width:33%;text-align:center">
 <input type="number" id="p_m2" min="0" max="59" placeholder="M" style="width:33%;text-align:center">
 <input type="number" id="p_d2" min="0" max="120" placeholder="Min" style="width:34%">
-</div></div></div></div></div>
-
-<div style="display:flex;gap:15px;margin-bottom:15px;background:#252525;padding:10px;border-radius:6px;border:1px solid #333;align-items:center;flex-wrap:wrap">
-<label style="font-weight:bold;color:var(--warning);font-size:.9rem">&#128467;&#65039; D&#237;as globales de riego:</label>
+</div></div></div></div></div><div style="display:flex;gap:15px;margin-bottom:15px;background:#252525;padding:10px;border-radius:6px;border:1px solid #333;align-items:center;flex-wrap:wrap">
+<label style="font-weight:bold;color:var(--warning);font-size:.9rem"> D&#237;as globales de riego:</label>
 <div style="display:flex;flex-wrap:wrap;gap:12px" id="checkboxes_dias">
 <label><input type="checkbox" class="chk-dia" value="1"> Lun</label><label><input type="checkbox" class="chk-dia" value="2"> Mar</label>
 <label><input type="checkbox" class="chk-dia" value="3"> Mi&#233;</label><label><input type="checkbox" class="chk-dia" value="4"> Jue</label>
 <label><input type="checkbox" class="chk-dia" value="5"> Vie</label><label><input type="checkbox" class="chk-dia" value="6"> S&#225;b</label>
 <label><input type="checkbox" class="chk-dia" value="7"> Dom</label>
-</div></div>
-
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px">
-<button class="btn-danger" style="background:#2c2c2c" onclick="enviar('GET_STATUS')">&#128260; Actualizar</button>
-<button class="btn-success" onclick="enviarProgramacionWeb()">&#128190; Guardar Cambios en ESP32</button>
+</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:15px">
+<button class="btn-danger" style="background:#2c2c2c" onclick="enviar('GET_STATUS')"> Actualizar</button>
+<button class="btn-success" onclick="enviarProgramacionWeb()"> Guardar Cambios en ESP32</button>
 </div>
 </div>
-</div>
-
-<script>
+</div><script>
 const broker="636db169bfd3417bbe1d3c0409e44f3e.s1.eu.hivemq.cloud";
 const puerto=8884;
 const usuario="Riego_Pro_V4";
@@ -210,7 +168,7 @@ let estadoAnterior={iniciado:false,z1:false,z2:false,z3:false,z4:false,motor:fal
 function setStatus(t,bg,color="white"){statusBar.innerText=t;statusBar.style.background=bg;statusBar.style.color=color}
 function iniciarMQTT(){
   if(typeof Paho==="undefined" || !Paho.MQTT){
-    setStatus("\u1F7E1 CALENDARIO DISPONIBLE \u2014 MQTT NO CARG\u00D3","#f1c40f","#000");
+    setStatus(" CALENDARIO DISPONIBLE \u2014 MQTT NO CARG\u00D3","#f1c40f","#000");
     return;
   }
   try{
@@ -230,25 +188,25 @@ function iniciarMQTT(){
     client.connect(opcionesConexion);
   }catch(e){
     console.error("Error iniciando MQTT:",e);
-    setStatus("\u1F7E1 CALENDARIO DISPONIBLE \u2014 ERROR MQTT","#f1c40f","#000");
+    setStatus(" CALENDARIO DISPONIBLE \u2014 ERROR MQTT","#f1c40f","#000");
   }
 }
 
 function alConectar(){
- setStatus("\u1F7E2 CONECTADO ONLINE","#2ecc71","#000");
+ setStatus(" CONECTADO ONLINE","#2ecc71","#000");
  client.subscribe("riego_pro/estado",{qos:1});
  enviar("GET_STATUS");
 }
-function alFallarConexion(e){setStatus("\u1F534 ERROR DE CONEXI\u00D3N: "+e.errorMessage,"#e74c3c")}
+function alFallarConexion(e){setStatus(" ERROR DE CONEXI\u00D3N: "+e.errorMessage,"#e74c3c")}
 function alPerderConexion(e){
- setStatus("\u1F534 DESCONECTADO (Reconectando...)","#e74c3c");
+ setStatus(" DESCONECTADO (Reconectando...)","#e74c3c");
  setTimeout(()=>{ if(client && !client.isConnected()) iniciarMQTT(); },5000);
 }
 function enviar(mensaje){
  if(!client || !client.isConnected()){alert("No est\u00E1s conectado al broker MQTT.");return}
  const msg=new Paho.MQTT.Message(mensaje);msg.destinationName="riego_pro/comando";msg.qos=1;client.send(msg);
- setStatus("\u26A1 ENVIADO: "+mensaje,"#3498db");
- setTimeout(()=>{if(client && client.isConnected())setStatus("\u1F7E2 CONECTADO ONLINE","#2ecc71","#000")},2000);
+ setStatus("ENVIADO: "+mensaje,"#3498db");
+ setTimeout(()=>{if(client && client.isConnected())setStatus(" CONECTADO ONLINE","#2ecc71","#000")},2000);
 }
 
 function mascaraTieneDia(mask,dia){return (mask & (1<<dia))!==0}
@@ -295,7 +253,7 @@ function actualizarDetalleDia(fecha,tiene){
  const op={weekday:"long",year:"numeric",month:"long",day:"numeric"};
  document.getElementById("det_fecha").innerText=fecha.toLocaleDateString("es-AR",op);
  const turnos=`Turno 1: ${fmtTurno(p.h1,p.m1,p.d1)}<br>Turno 2: ${fmtTurno(p.h2,p.m2,p.d2)}`;
- document.getElementById("det_estado").innerHTML=tiene?`\u1F331 <span style="color:var(--success);font-weight:bold">Riego Autom\u00E1tico Activo</span><br><small style="color:#aaa">${turnos}</small>`:`\u274C <span style="color:var(--danger);font-weight:bold">Sin riego programado</span>`;
+ document.getElementById("det_estado").innerHTML=tiene?` <span style="color:var(--success);font-weight:bold">Riego Autom\u00E1tico Activo</span><br><small style="color:#aaa">${turnos}</small>`:`[OFF] <span style="color:var(--danger);font-weight:bold">Sin riego programado</span>`;
 }
 function fmtTurno(h,m,d){return d>0?`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")} \u2192 ${d} min`:"Sin programar"}
 
@@ -335,13 +293,21 @@ function alRecibirMensaje(message){
  }
  estadoAnterior={iniciado:true,z1:!!data.z1,z2:!!data.z2,z3:!!data.z3,z4:!!data.z4,motor:!!data.motor,auto:!!data.auto};
  document.getElementById("hora").innerText=data.hora||"--";
- document.getElementById("auto").innerText=data.auto?"\u1F7E2 HABILITADO":"\u1F534 DESHABILITADO";
- document.getElementById("motor").innerText=data.motor?"\u1F7E2 ENCENDIDA":"\u1F534 PARADO";
- document.getElementById("lluvia").innerText=data.lluvia?"\u1F327\uFE0F LLUVIA":"\u2600\uFE0F SECO";
- document.getElementById("temp").innerText=Number(data.temp||0).toFixed(1)+" \u00B0C";
- document.getElementById("rainChance").innerText=Number(data.rainChance||0)+" %";
- document.getElementById("rainStatus").innerText=data.rainBlock?"\u1F327\uFE0F Riego suspendido":"\u2705 Riego habilitado";
- document.getElementById("z1").innerText=data.z1?"\u1F7E2 ENCENDIDA":"\u1F534 APAGADA";document.getElementById("z2").innerText=data.z2?"\u1F7E2 ENCENDIDA":"\u1F534 APAGADA";document.getElementById("z3").innerText=data.z3?"\u1F7E2 ENCENDIDA":"\u1F534 APAGADA";document.getElementById("z4").innerText=data.z4?"\u1F7E2 ENCENDIDA":"\u1F534 APAGADA";
+ document.getElementById("auto").innerText=data.auto?"HABILITADO":"DESHABILITADO";
+ document.getElementById("motor").innerText=data.motor?"ENCENDIDA":"PARADO";
+ document.getElementById("lluvia").innerText=data.lluvia?"LLUVIA":"SECO";
+
+ const tempValue=Number(data.temp);
+ const rainValue=Number(data.rainChance);
+ document.getElementById("temp").innerText=Number.isFinite(tempValue)?tempValue.toFixed(1)+" \u00B0C":"-- \u00B0C";
+ document.getElementById("rainChance").innerText=Number.isFinite(rainValue)?Math.round(rainValue)+" %":"-- %";
+ document.getElementById("rainStatus").innerText=data.rainBlock?"RIEGO SUSPENDIDO":"RIEGO HABILITADO";
+ document.getElementById("climaHora").innerText=new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+
+ document.getElementById("z1").innerText=data.z1?"ENCENDIDA":"APAGADA";
+ document.getElementById("z2").innerText=data.z2?"ENCENDIDA":"APAGADA";
+ document.getElementById("z3").innerText=data.z3?"ENCENDIDA":"APAGADA";
+ document.getElementById("z4").innerText=data.z4?"ENCENDIDA":"APAGADA";
  document.getElementById("prog1").innerText=data.prog1||"Sin programar";
  document.getElementById("prog2").innerText=data.prog2||"Sin programar";
  document.getElementById("prog3").innerText=data.prog3||"Sin programar";
